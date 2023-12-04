@@ -13,7 +13,7 @@ import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorator/';
 import { EditUserDto } from './dto';
 
-@UseGuards(jwtGuard)
+// @UseGuards(jwtGuard)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
