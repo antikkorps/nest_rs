@@ -25,7 +25,6 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
     }
     cleanDb() {
         return this.$transaction([
-            this.annonce.deleteMany(),
             this.user.deleteMany(),
         ]);
     }
