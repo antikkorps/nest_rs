@@ -131,63 +131,38 @@ describe('App e2e', () => {
     describe('Delete current user', () => {});
     describe('Get all users', () => {});
   });
-  describe('Annonce', () => {
-    describe('Create annonce', () => {
-      it('should create an annonce if the user is connected', () => {
-        return pactum
-          .spec()
-          .post('/annonces/new')
-          .withHeaders({
-            Authorization: 'Bearer $S{userAccessToken}',
-          })
-          .withBody({
-            title: 'test',
-            description: 'test',
-            price: 10000,
-            yearofcirculation: 2010,
-            kilometrage: 10000,
-            published: true,
-          })
-          .expectStatus(201);
-      });
-    });
-    describe('Get annonces', () => {});
-    describe('Get annonce by ID', () => {});
-    describe('Update annonce', () => {});
-    describe('Delete annonce', () => {});
 
-    describe('Create Contact', () => {
-      it('should create a contact', () => {
-        return pactum.spec().post('/contacts/new').withBody({
-          name: 'Test Contact',
-          phone: '123456789',
-          email: 'test@example.com',
-          message: 'Test message',
-        });
+  describe('Create Contact', () => {
+    it('should create a contact', () => {
+      return pactum.spec().post('/contacts/new').withBody({
+        name: 'Test Contact',
+        phone: '123456789',
+        email: 'test@example.com',
+        message: 'Test message',
       });
     });
-    describe('Get all contacts', () => {
-      it('should get all contacts', () => {
-        return pactum
-          .spec()
-          .get('/contacts/all')
-          .withHeaders({
-            Authorization: 'Bearer $S{userAccessToken}',
-          })
-          .expectStatus(200);
-      });
-    });
-    describe('Get contact by ID', () => {
-      it('should return a contact by its id', () => {
-        return pactum
-          .spec()
-          .get('/contacts/2')
-          .withHeaders({
-            Authorization: 'Bearer $S{userAccessToken}',
-          })
-          .expectStatus(200);
-      });
-    });
-    describe('Delete contact', () => {});
   });
+  describe('Get all contacts', () => {
+    it('should get all contacts', () => {
+      return pactum
+        .spec()
+        .get('/contacts/all')
+        .withHeaders({
+          Authorization: 'Bearer $S{userAccessToken}',
+        })
+        .expectStatus(200);
+    });
+  });
+  describe('Get contact by ID', () => {
+    it('should return a contact by its id', () => {
+      return pactum
+        .spec()
+        .get('/contacts/2')
+        .withHeaders({
+          Authorization: 'Bearer $S{userAccessToken}',
+        })
+        .expectStatus(200);
+    });
+  });
+  describe('Delete contact', () => {});
 });

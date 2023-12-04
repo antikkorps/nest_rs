@@ -11,20 +11,6 @@ const fakerUser = () => ({
     email: faker_1.faker.internet.email(),
     password: faker_1.faker.internet.password(),
 });
-const fakerAnnonce = () => ({
-    title: faker_1.faker.company.buzzPhrase(),
-    description: faker_1.faker.lorem.paragraph(),
-    brand: faker_1.faker.company.name(),
-    price: faker_1.faker.number.int({ min: 4000, max: 22000 }),
-    kilometrage: faker_1.faker.number.int({ max: 100000 }),
-    yearofcirculation: faker_1.faker.number.int({ min: 2000, max: 2023 }),
-    published: faker_1.faker.datatype.boolean(),
-    featured: faker_1.faker.datatype.boolean(),
-    imageCover: faker_1.faker.image.url(),
-    imageOne: faker_1.faker.image.url(),
-    imageTwo: faker_1.faker.image.url(),
-    imageThree: faker_1.faker.image.url(),
-});
 const fakerContact = () => ({
     name: faker_1.faker.person.fullName(),
     email: faker_1.faker.internet.email(),
@@ -38,7 +24,6 @@ async function main() {
     console.log('Seeding...');
     for (let i = 0; i < fakerRounds; i++) {
         await prisma.user.create({ data: fakerUser() });
-        await prisma.annonce.create({ data: fakerAnnonce() });
         await prisma.contact.create({ data: fakerContact() });
     }
     await prisma.user.create({
@@ -49,73 +34,6 @@ async function main() {
             password: await argon2.hash(process.env.ADMIN_PASSWORD),
             role: 'ADMIN',
         },
-    });
-    await prisma.horaire.createMany({
-        data: [
-            {
-                jourDeLaSemaine: 'lundi',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: true,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-            {
-                jourDeLaSemaine: 'mardi',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: true,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-            {
-                jourDeLaSemaine: 'mercredi',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: true,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-            {
-                jourDeLaSemaine: 'jeudi',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: true,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-            {
-                jourDeLaSemaine: 'vendredi',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: true,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-            {
-                jourDeLaSemaine: 'samedi',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: false,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-            {
-                jourDeLaSemaine: 'dimanche',
-                ouvertureAm: true,
-                openingAm: '2023-10-03T09:00:00.000Z',
-                closingAm: '2023-10-03T12:00:00.000Z',
-                ouverturePm: true,
-                openingPm: '2023-10-03T14:00:00.000Z',
-                closingPm: '2023-10-03T18:00:00.000Z',
-            },
-        ],
     });
     console.log('Seeding done !');
 }

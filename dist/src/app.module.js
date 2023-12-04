@@ -13,12 +13,9 @@ const app_service_1 = require("./app.service");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
 const user_module_1 = require("./user/user.module");
-const annonce_module_1 = require("./annonce/annonce.module");
 const prisma_module_1 = require("./prisma/prisma.module");
-const annonces_module_1 = require("./annonces/annonces.module");
 const contacts_module_1 = require("./contacts/contacts.module");
 const images_module_1 = require("./images/images.module");
-const horaires_module_1 = require("./horaires/horaires.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -30,12 +27,9 @@ exports.AppModule = AppModule = __decorate([
             }),
             auth_module_1.AuthModule,
             user_module_1.UserModule,
-            annonce_module_1.AnnonceModule,
             prisma_module_1.PrismaModule,
-            annonces_module_1.AnnoncesModule,
             contacts_module_1.ContactsModule,
             images_module_1.ImagesModule,
-            horaires_module_1.HorairesModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

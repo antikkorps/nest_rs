@@ -20,33 +20,8 @@ model User {
   role      String   @default("USER")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  annonces     Annonce[]
 
   @@map("users")
-}
-
-model Annonce {
-  id          Int  @id @default(autoincrement())
-  title       String
-  description String
-  brand       String?
-  price       Int
-  kilometrage Int?
-  yearofcirculation Int?
-  published         Boolean     @default(false)
-  featured          Boolean     @default(false)
-  imageCover        String?
-  imageOne          String?
-  imageTwo          String?
-  imageThree        String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author            User?       @relation(fields: [authorId], references: [id])
-  authorId          Int?
-  Equipment         Equipment[]
-
-  @@map("annonces")
 }
 
 model Image {
@@ -57,11 +32,6 @@ model Image {
   AnnonceId     Int?
 }
 
-model Equipment {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  Annonces Annonce[]
-}
 
 model Contact {
   id            Int       @id @default(autoincrement())
@@ -70,15 +40,4 @@ model Contact {
   phone         String?
   purpose       String?
   message       String?
-}
-
-model Horaire {
-  id         Int      @id @default(autoincrement())
-  jourDeLaSemaine  String
-  ouvertureAm Boolean @default(true)
-  openingAm  String
-  closingAm  String
-  ouverturePm Boolean @default(true)
-  openingPm  String
-  closingPm  String
 }
