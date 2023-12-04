@@ -1,4 +1,4 @@
-# Garage PARROT - Backend
+# RS - Backend
 
 ## Description
 
