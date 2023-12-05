@@ -11,33 +11,118 @@ datasource db {
 }
 
 model User {
-  id        Int   @id @default(autoincrement())
-  email     String   @unique
-  firstName String?
-  lastName  String?
-  password  String
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  firstName  String?
+  lastName   String?
+  password   String
   resetToken String?
-  role      String   @default("USER")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role       String   @default("USER")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  avatar        String?
+  birth         DateTime?
+  sex           String?
+  subscriptions SubscriptionUser[]
+
+  salons Salon[]  @relation("userToSalons")
+  Image Image[] @relation("userImages")
 
   @@map("users")
 }
 
-model Image {
-  id            Int      @id @default(autoincrement())
-  name          String?
-  url           String?
-  featuredImage Boolean @default(false)
-  AnnonceId     Int?
+// TABLES ABONNEMENT
+model SubscriptionUser {
+  id                 Int       @id @default(autoincrement())
+  since_month        String?
+  billing_start_date DateTime?
+  billing_end_date   DateTime?
+  status             String
+  billing_next_date  DateTime?
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  subscriptionId Int
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
 }
 
+model Subscription {
+  id             Int                         @id @default(autoincrement())
+  name           String                      @unique
+  slug           String                      @unique
+  price          Float
+  users          SubscriptionUser[]
+  authorizations AuthorizationSubscription[] // Relation many-to-many
+}
+
+model Salon {
+  id      Int     @id @default(autoincrement())
+  name    String
+  logo    String?
+  street  String
+  zipcode String
+  country String
+  userId  Int
+  user    User    @relation("userToSalons", fields: [userId], references: [id])
+}
+
+model Image {
+  id     Int     @id @default(autoincrement())
+  url    String
+  name   String?
+  userId Int
+  user   User    @relation("userImages", fields: [userId], references: [id])
+}
+
+// TABLES PERMISSIONS
+model Role {
+  id             Int                 @id @default(autoincrement())
+  name           String              @unique
+  slug           String              @unique
+  authorizations AuthorizationRole[]
+}
+
+model Authorization {
+  id            Int                         @id @default(autoincrement())
+  name          String                      @unique
+  slug          String                      @unique
+  roles         AuthorizationRole[]
+  subscriptions AuthorizationSubscription[] // Relation many-to-many
+}
+
+// TABLES PIVOTS
+
+model AuthorizationRole {
+  id              Int @id @default(autoincrement())
+  roleId          Int
+  authorizationId Int
+
+  role          Role          @relation(fields: [roleId], references: [id])
+  authorization Authorization @relation(fields: [authorizationId], references: [id])
+
+  @@unique([roleId, authorizationId])
+}
+
+model AuthorizationSubscription {
+  id              Int @id @default(autoincrement())
+  subscriptionId  Int
+  authorizationId Int
+
+  subscription  Subscription  @relation(fields: [subscriptionId], references: [id])
+  authorization Authorization @relation(fields: [authorizationId], references: [id])
+
+  @@unique([subscriptionId, authorizationId])
+}
+
+//  Autre tables
 
 model Contact {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  email         String?
-  phone         String?
-  purpose       String?
-  message       String?
+  id      Int     @id @default(autoincrement())
+  name    String?
+  email   String?
+  phone   String?
+  purpose String?
+  message String?
 }
