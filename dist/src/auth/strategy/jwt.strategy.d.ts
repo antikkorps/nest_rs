@@ -19,6 +19,9 @@ export declare class JwtStrategy extends JwtStrategy_base {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
 }
 export {};

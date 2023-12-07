@@ -13,6 +13,9 @@ export declare class UserService {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     getAllUsers(): Promise<{
         id: number;
@@ -24,6 +27,9 @@ export declare class UserService {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }[]>;
     getUserById(userId: number): Promise<{
         id: number;
@@ -35,6 +41,9 @@ export declare class UserService {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     deleteUser(userId: number): Promise<{
         id: number;
@@ -46,5 +55,8 @@ export declare class UserService {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
 }
