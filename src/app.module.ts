@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ContactsModule } from './contacts/contacts.module';
-import { ImagesModule } from './images/images.module';
+import { SalonModule } from './salon/salon.module';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { ImagesModule } from './images/images.module';
     UserModule,
     PrismaModule,
     ContactsModule,
-    ImagesModule,
+    SalonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
