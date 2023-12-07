@@ -31,7 +31,7 @@ export class SalonController {
     }
 
     // Patch
-    // Ici rajouter une vérification, le user doit être le proprio du salon pour l'editer
+    // Add an user verification here to know if he's the owner
     @UseGuards(jwtGuard)
     @Patch(':id')
     editSalon(@Param('id') salonId: string, @Body() updateSalonDto: UpdateSalonDto) {
@@ -40,7 +40,7 @@ export class SalonController {
     }
 
     // Delete
-    // Ici rajouter une vérification, le user doit être le proprio du salon pour le supprimer
+       // Add an user verification here to know if he's the owner
     @UseGuards(jwtGuard)
     @Delete(':id')
     remove(@Param('id') id: string) {
