@@ -12,9 +12,13 @@ export class CreateSalonDto {
     @IsNotEmpty()
     street: string;
 
-    @IsInt()
+    @IsString()
     @IsNotEmpty()
-    zipcode: number;
+    zipcode: string;
+
+    @IsString()
+    @IsNotEmpty()
+    country: string;
 
     @IsInt()
     @IsNotEmpty()
