@@ -14,6 +14,9 @@ export declare class UserController {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     };
     getAllUsers(): Promise<{
         id: number;
@@ -25,6 +28,9 @@ export declare class UserController {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }[]>;
     getUserById(userId: string): Promise<{
         id: number;
@@ -36,6 +42,9 @@ export declare class UserController {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     editUser(userId: string, dto: EditUserDto): Promise<{
         id: number;
@@ -47,6 +56,9 @@ export declare class UserController {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     deleteUser(userId: string): Promise<{
         id: number;
@@ -58,5 +70,8 @@ export declare class UserController {
         role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
 }
