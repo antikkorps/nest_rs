@@ -19,14 +19,14 @@ export class ImageService {
         });
     }
 
-    // Vérifier que le userId correspond bien au user connecté
+    // Is userId === auth user?
     async remove(id: number) {
         return this.prisma.image.delete({
           where: { id },
         });
     }
 
-    // Vérifier que le userId correspond bien au user connecté
+    // Is userId === auth user?
     async editImage(imageId: number, updateImageDto: UpdateImageDto) {
         const image = await this.prisma.image.update({
           where: { id: imageId },
