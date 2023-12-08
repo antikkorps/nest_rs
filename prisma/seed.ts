@@ -36,23 +36,24 @@ async function main() {
   dotenv.config();
   console.log('Seeding...');
   // /// --------- Users && Annonces && Contacts --------------- ///
+
+  /// --------- create one admin --------------- ///
+  await prisma.user.create({
+    data: {
+      firstName: 'admin',
+      lastName: 'admin',
+      email: 'admin@admin.com',
+      password: await argon2.hash(process.env.ADMIN_PASSWORD),
+      role: 'ADMIN',
+    },
+  });
+
   for (let i = 0; i < fakerRounds; i++) {
     // await prisma.user.create({ data: fakerUser() });
     // await prisma.contact.create({ data: fakerContact() });
     await prisma.salon.create({ data: fakerSalon() });
   }
-  /// --------- create one admin --------------- ///
-  // await prisma.user.create({
-  //   data: {
-  //     firstName: 'admin',
-  //     lastName: 'admin',
-  //     email: 'admin@admin.com',
-  //     password: await argon2.hash(process.env.ADMIN_PASSWORD),
-  //     role: 'ADMIN',
-  //   },
-  // });
-
- 
+  
   console.log('Seeding done !');
 }
 
