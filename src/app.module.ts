@@ -10,6 +10,7 @@ import { SalonModule } from './salon/salon.module';
 import { ImageController } from './image/image.controller';
 import { ImageService } from './image/image.service';
 import { ImageModule } from './image/image.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ImageModule } from './image/image.module';
     ContactsModule,
     SalonModule,
     ImageModule,
+    RoleModule,
   ],
   controllers: [AppController, ImageController],
   providers: [AppService, ImageService],

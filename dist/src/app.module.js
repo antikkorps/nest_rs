@@ -19,6 +19,7 @@ const salon_module_1 = require("./salon/salon.module");
 const image_controller_1 = require("./image/image.controller");
 const image_service_1 = require("./image/image.service");
 const image_module_1 = require("./image/image.module");
+const role_module_1 = require("./role/role.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -34,6 +35,7 @@ exports.AppModule = AppModule = __decorate([
             contacts_module_1.ContactsModule,
             salon_module_1.SalonModule,
             image_module_1.ImageModule,
+            role_module_1.RoleModule,
         ],
         controllers: [app_controller_1.AppController, image_controller_1.ImageController],
         providers: [app_service_1.AppService, image_service_1.ImageService],
