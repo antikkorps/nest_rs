@@ -8,8 +8,6 @@ export class RoleController {
     constructor(public roleService: RoleService) {}
     // All the method need to be admin or super admin verify
 
-
-
     // Get all roles
     @Get()
     getRoles() {

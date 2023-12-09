@@ -25,7 +25,11 @@ let UserService = class UserService {
         return user;
     }
     async getAllUsers() {
-        const users = await this.prisma.user.findMany();
+        const users = await this.prisma.user.findMany({
+            include: {
+                roles: true
+            },
+        });
         return users.map((user) => {
             delete user.password;
             return user;

@@ -52,19 +52,24 @@ let AuthService = class AuthService {
             where: {
                 email: dto.email,
             },
+            include: {
+                roles: true
+            }
         });
         if (!user)
             throw new common_1.ForbiddenException('Utilisateur et/ou mot de passe incorrects');
         const passwordMatches = await argon.verify(user.password, dto.password);
+        const userRoles = user.roles.map(role => role.roleId.toString());
+        const concatenatedRoles = userRoles.join(',');
         if (!passwordMatches)
             throw new common_1.ForbiddenException('Utilisateur et/ou mot de passe incorrects');
-        return this.signToken(user.id, user.email, user.role);
+        return this.signToken(user.id, user.email, concatenatedRoles);
     }
-    async signToken(userId, email, role) {
+    async signToken(userId, email, roles) {
         const payload = {
             sub: userId,
             email,
-            role,
+            roles,
         };
         const secret = this.config.get('JWT_SECRET');
         const token = await this.jwt.signAsync(payload, {
