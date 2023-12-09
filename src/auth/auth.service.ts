@@ -52,6 +52,9 @@ export class AuthService {
       where: {
         email: dto.email,
       },
+      include: {
+        roles: true
+      }
     });
     //if user does not exist throw exception
     if (!user)
@@ -59,19 +62,25 @@ export class AuthService {
     //compare password
     const passwordMatches = await argon.verify(user.password, dto.password);
     //if password incorrect, throw an exception
+
+    // Get the user roles
+    const userRoles = user.roles.map(role => role.roleId.toString());
+    // Join it in one strnig
+    const concatenatedRoles = userRoles.join(','); 
+
     if (!passwordMatches)
       throw new ForbiddenException('Utilisateur et/ou mot de passe incorrects');
-    return this.signToken(user.id, user.email, user.role);
+    return this.signToken(user.id, user.email, concatenatedRoles);
   }
   async signToken(
     userId: number,
     email: string,
-    role: string,
+    roles: string,
   ): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
       email,
-      role,
+      roles,
     };
     const secret = this.config.get('JWT_SECRET');
 

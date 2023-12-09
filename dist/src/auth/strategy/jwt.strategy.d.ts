@@ -16,7 +16,6 @@ export declare class JwtStrategy extends JwtStrategy_base {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
         avatar: string;

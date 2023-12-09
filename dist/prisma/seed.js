@@ -4,6 +4,7 @@ const faker_1 = require("@faker-js/faker");
 const client_1 = require("@prisma/client");
 const dotenv = require("dotenv");
 const argon2 = require("argon2");
+const roleSeeder_1 = require("./seeds/roleSeeder");
 const prisma = new client_1.PrismaClient();
 const fakerSalon = () => ({
     name: faker_1.faker.company.name(),
@@ -17,13 +18,32 @@ async function main() {
     const fakerRounds = 20;
     dotenv.config();
     console.log('Seeding...');
+    for (const role of roleSeeder_1.roleSeeder) {
+        await prisma.role.create({
+            data: {
+                name: role.name,
+                slug: role.slug,
+            },
+        });
+    }
     await prisma.user.create({
         data: {
-            firstName: 'admin',
-            lastName: 'admin',
-            email: 'admin@admin.com',
+            firstName: 'superadmin',
+            lastName: 'superadmin',
+            email: 'superadmin@admin.com',
             password: await argon2.hash(process.env.ADMIN_PASSWORD),
-            role: 'ADMIN',
+            roles: {
+                create: [
+                    {
+                        assignedBy: 'Default',
+                        roleId: 1,
+                    },
+                    {
+                        assignedBy: 'Default',
+                        roleId: 2,
+                    },
+                ]
+            },
         },
     });
     for (let i = 0; i < fakerRounds; i++) {

@@ -15,7 +15,7 @@ export declare class AuthService {
     signin(dto: AuthDto): Promise<{
         access_token: string;
     }>;
-    signToken(userId: number, email: string, role: string): Promise<{
+    signToken(userId: number, email: string, roles: string): Promise<{
         access_token: string;
     }>;
     validateUser(token: string): Promise<boolean>;
