@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import * as argon2 from 'argon2';
+import { roleSeeder } from './seeds/roleSeeder';
 
 // In order to create seeds, use "npm run seed"
 
@@ -36,23 +37,49 @@ async function main() {
   dotenv.config();
   console.log('Seeding...');
   // /// --------- Users && Annonces && Contacts --------------- ///
+
+
+
+
+ // /// --------- ROLES --------------- ///
+  for (const role of roleSeeder) {
+    await prisma.role.create({
+      data: {
+        name: role.name,
+        slug: role.slug,
+      },
+    });
+  }
+  /// --------- create one admin --------------- ///
+  await prisma.user.create({
+    data: {
+      firstName: 'superadmin',
+      lastName: 'superadmin',
+      email: 'superadmin@admin.com',
+      password: await argon2.hash(process.env.ADMIN_PASSWORD),
+      roles: {
+        create: [
+          {
+            assignedBy: 'Default',
+            roleId: 1, // roleId 1 === Super Admin
+          },
+          {
+            assignedBy: 'Default',
+            roleId: 2, // roleId 1 === Admin
+          },
+        ]
+      },
+    },
+  });
+
   for (let i = 0; i < fakerRounds; i++) {
     // await prisma.user.create({ data: fakerUser() });
     // await prisma.contact.create({ data: fakerContact() });
     await prisma.salon.create({ data: fakerSalon() });
   }
-  /// --------- create one admin --------------- ///
-  // await prisma.user.create({
-  //   data: {
-  //     firstName: 'admin',
-  //     lastName: 'admin',
-  //     email: 'admin@admin.com',
-  //     password: await argon2.hash(process.env.ADMIN_PASSWORD),
-  //     role: 'ADMIN',
-  //   },
-  // });
+  
 
- 
+  
   console.log('Seeding done !');
 }
 

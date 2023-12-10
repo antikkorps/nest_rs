@@ -7,6 +7,10 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ContactsModule } from './contacts/contacts.module';
 import { SalonModule } from './salon/salon.module';
+import { ImageController } from './image/image.controller';
+import { ImageService } from './image/image.service';
+import { ImageModule } from './image/image.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -18,8 +22,10 @@ import { SalonModule } from './salon/salon.module';
     PrismaModule,
     ContactsModule,
     SalonModule,
+    ImageModule,
+    RoleModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ImageController],
+  providers: [AppService, ImageService],
 })
 export class AppModule {}
