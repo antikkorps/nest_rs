@@ -1,0 +1,102 @@
+<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>306</x><y>0</y><w>126</w><h>180</h></coordinates><panel_attributes>User
+--
+-id: BigInt @unique
+-lastname: string 
+-firstname: string
+-avatar: string
+-birth: date
+-sex: string
+-email: email @unique
+-password: hash
+-created_at
+-updated_at
+-roles
+-subscription
+--
+Relations
+-role_id
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>462</x><y>0</y><w>126</w><h>138</h></coordinates><panel_attributes>Salon
+--
+-id: BigInt @unique
+-name: string
+-logo: string
+-street: string
+-zipcode: string
+-country: string
+-user: FOREIGN KEY
+-galery: FOREIGN KEY
+--
+Relations
+-user_id
+-galery_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>126</x><y>0</y><w>126</w><h>78</h></coordinates><panel_attributes>Role
+--
+-id: BigInt @unique
+-name: string
+-slug: string
+-authorization: FOREIGN KEY
+--
+Relations
+-authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>126</x><y>84</y><w>126</w><h>48</h></coordinates><panel_attributes>Authorization
+--
+-id: BigInt @unique
+-name: string
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>306</x><y>198</y><w>126</w><h>90</h></coordinates><panel_attributes>Subscription
+--
+-id: BigInt @unique
+-name: string
+-slug: string
+-authorization: FOREIGN KEY
+-price: float
+--
+Relations
+-authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>198</y><w>126</w><h>90</h></coordinates><panel_attributes>SubscriptionUser
+--
+-id: BigInt @unique
+-user
+-subscription
+-since_month: string
+-billing_start_date:  date
+-billing_last_date: date
+-status: string (Enum : paid, pending, canceled)
+-billing_next_date: date
+
+--
+Relations
+-user_id
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>360</y><w>126</w><h>90</h></coordinates><panel_attributes>Post
+--
+-id: BigInt @unique
+
+--
+Relations
+-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>582</x><y>360</y><w>126</w><h>90</h></coordinates><panel_attributes>Like
+--
+-id: BigInt @unique
+
+--
+Relations
+-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>318</x><y>360</y><w>126</w><h>90</h></coordinates><panel_attributes>Gallery
+--
+-id: BigInt @unique
+-url: string
+-name: string
+-tag: FOREIGN KEY
+
+--
+Relations
+-tag_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>198</x><y>360</y><w>102</w><h>54</h></coordinates><panel_attributes>Tag
+--
+-id: BigInt @unique
+-name: string
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>246</x><y>480</y><w>126</w><h>54</h></coordinates><panel_attributes>Gallery_Tag
+--
+-id: BigInt @unique
+-tag_id
+-galery_id
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>582</x><y>462</y><w>84</w><h>48</h></coordinates><panel_attributes>Follow
+--
+-follower_id
+-followed_id
+--
+Les relations sont tous les deux un user
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>
