@@ -1,5 +1,4 @@
-declare const rolesGuard_base: import("@nestjs/passport").Type<import("@nestjs/passport").IAuthGuard>;
-export declare class rolesGuard extends rolesGuard_base {
-    constructor();
+import { CanActivate, ExecutionContext } from "@nestjs/common";
+export declare class VerifyRoles implements CanActivate {
+    canActivate(context: ExecutionContext): boolean;
 }
-export {};
