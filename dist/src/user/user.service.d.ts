@@ -10,21 +10,32 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
-    getAllUsers(): Promise<{
+    getAllUsers(): Promise<({
+        roles: {
+            userId: number;
+            roleId: number;
+            assignedAt: Date;
+            assignedBy: string;
+        }[];
+    } & {
         id: number;
         email: string;
         firstName: string;
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
-    }[]>;
+        avatar: string;
+        birth: Date;
+        sex: string;
+    })[]>;
     getUserById(userId: number): Promise<{
         id: number;
         email: string;
@@ -32,9 +43,11 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     deleteUser(userId: number): Promise<{
         id: number;
@@ -43,8 +56,10 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
 }

@@ -11,21 +11,32 @@ export declare class UserController {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     };
-    getAllUsers(): Promise<{
+    getAllUsers(): Promise<({
+        roles: {
+            userId: number;
+            roleId: number;
+            assignedAt: Date;
+            assignedBy: string;
+        }[];
+    } & {
         id: number;
         email: string;
         firstName: string;
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
-    }[]>;
+        avatar: string;
+        birth: Date;
+        sex: string;
+    })[]>;
     getUserById(userId: string): Promise<{
         id: number;
         email: string;
@@ -33,9 +44,11 @@ export declare class UserController {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     editUser(userId: string, dto: EditUserDto): Promise<{
         id: number;
@@ -44,9 +57,11 @@ export declare class UserController {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
     deleteUser(userId: string): Promise<{
         id: number;
@@ -55,8 +70,10 @@ export declare class UserController {
         lastName: string;
         password: string;
         resetToken: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
+        avatar: string;
+        birth: Date;
+        sex: string;
     }>;
 }
