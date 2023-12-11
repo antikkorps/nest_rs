@@ -15,7 +15,7 @@
 --
 Relations
 -role_id
--subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>675</x><y>9</y><w>189</w><h>207</h></coordinates><panel_attributes>Salon
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1296</x><y>18</y><w>189</w><h>207</h></coordinates><panel_attributes>Salon
 --
 -id: BigInt @unique
 -name: string
@@ -28,7 +28,7 @@ Relations
 --
 Relations
 -user_id
--galery_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>171</x><y>9</y><w>189</w><h>117</h></coordinates><panel_attributes>Role
+-gallery_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>171</x><y>9</y><w>189</w><h>117</h></coordinates><panel_attributes>Role
 --
 -id: BigInt @unique
 -name: string
@@ -40,7 +40,7 @@ Relations
 --
 -id: BigInt @unique
 -name: string
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>54</y><w>189</w><h>135</h></coordinates><panel_attributes>Subscription
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>18</y><w>189</w><h>135</h></coordinates><panel_attributes>Subscription
 --
 -id: BigInt @unique
 -name: string
@@ -49,11 +49,11 @@ Relations
 -price: float
 --
 Relations
--authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>216</y><w>189</w><h>135</h></coordinates><panel_attributes>SubscriptionUser
+-authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>180</y><w>261</w><h>207</h></coordinates><panel_attributes>SubscriptionUser
 --
 -id: BigInt @unique
--user
--subscription
+-user: FOREIGN KEY
+-subscription: FOREIGN KEY
 -since_month: string
 -billing_start_date:  date
 -billing_last_date: date
@@ -62,20 +62,26 @@ Relations
 
 --
 Relations
+-
 -user_id
 -subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>657</x><y>549</y><w>189</w><h>135</h></coordinates><panel_attributes>Post
 --
 -id: BigInt @unique
+-user: FOREIGN KEY
+-description: string
 
 --
 Relations
--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>855</x><y>549</y><w>189</w><h>135</h></coordinates><panel_attributes>Like
+-
+-user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>549</y><w>189</w><h>135</h></coordinates><panel_attributes>Like
 --
 -id: BigInt @unique
+-user: FOREIGN KEY
 
 --
 Relations
--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>207</x><y>522</y><w>189</w><h>162</h></coordinates><panel_attributes>Image Gallery
+-
+user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>207</x><y>522</y><w>189</w><h>162</h></coordinates><panel_attributes>Image Gallery
 --
 -id: BigInt @unique
 -url: string
