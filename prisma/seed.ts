@@ -61,11 +61,11 @@ async function main() {
         create: [
           {
             assignedBy: 'Default',
-            roleId: 1, // roleId 1 === Super Admin
+            roleSlug: "super_admin", // roleId 1 === Super Admin
           },
           {
             assignedBy: 'Default',
-            roleId: 2, // roleId 1 === Admin
+            roleSlug: "admin", // roleId 1 === Admin
           },
         ]
       },

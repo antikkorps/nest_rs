@@ -10,8 +10,8 @@ export class SalonController {
 
 
     // JWTGuard??
-    @UseGuards(jwtGuard)
-    @UseGuards(VerifyRoles)
+    @UseGuards(jwtGuard, new VerifyRoles('guest'))
+    // @UseGuards(VerifyRoles)
     @Get()
     getSalons() {
         return this.salonService.findAll();
