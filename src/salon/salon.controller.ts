@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 
 import { SalonService } from './salon.service';
-import { jwtGuard } from 'src/auth/guard';
+import { VerifyRoles, jwtGuard } from 'src/auth/guard';
 import { CreateSalonDto } from './dto/CreateSalon.dto';
 import { UpdateSalonDto } from './dto/UpdateSalon.dto';
 @Controller('salon')
@@ -10,7 +10,8 @@ export class SalonController {
 
 
     // JWTGuard??
-    @UseGuards(jwtGuard)
+    @UseGuards(jwtGuard, new VerifyRoles('guest'))
+    // @UseGuards(VerifyRoles)
     @Get()
     getSalons() {
         return this.salonService.findAll();

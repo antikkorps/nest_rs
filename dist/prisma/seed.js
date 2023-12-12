@@ -36,11 +36,11 @@ async function main() {
                 create: [
                     {
                         assignedBy: 'Default',
-                        roleId: 1,
+                        roleSlug: "super_admin",
                     },
                     {
                         assignedBy: 'Default',
-                        roleId: 2,
+                        roleSlug: "admin",
                     },
                 ]
             },

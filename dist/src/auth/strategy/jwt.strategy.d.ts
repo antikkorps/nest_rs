@@ -8,8 +8,15 @@ export declare class JwtStrategy extends JwtStrategy_base {
     validate(payload: {
         sub: number;
         email: string;
-        role: string;
+        roles: string;
     }): Promise<{
+        roles: {
+            userId: number;
+            roleSlug: string;
+            assignedAt: Date;
+            assignedBy: string;
+        }[];
+    } & {
         id: number;
         email: string;
         firstName: string;
