@@ -20,7 +20,7 @@ export declare class UserController {
     getAllUsers(): Promise<({
         roles: {
             userId: number;
-            roleId: number;
+            roleSlug: string;
             assignedAt: Date;
             assignedBy: string;
         }[];

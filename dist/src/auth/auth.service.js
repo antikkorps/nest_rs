@@ -59,7 +59,7 @@ let AuthService = class AuthService {
         if (!user)
             throw new common_1.ForbiddenException('Utilisateur et/ou mot de passe incorrects');
         const passwordMatches = await argon.verify(user.password, dto.password);
-        const userRoles = user.roles.map(role => role.roleId.toString());
+        const userRoles = user.roles.map(role => role.roleSlug.toString());
         const concatenatedRoles = userRoles.join(',');
         if (!passwordMatches)
             throw new common_1.ForbiddenException('Utilisateur et/ou mot de passe incorrects');
