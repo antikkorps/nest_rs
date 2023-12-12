@@ -15,7 +15,7 @@
 --
 Relations
 -role_id
--subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1260</x><y>18</y><w>189</w><h>207</h></coordinates><panel_attributes>Salon
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1008</x><y>378</y><w>189</w><h>207</h></coordinates><panel_attributes>Salon
 --
 -id: BigInt @unique
 -name: string
@@ -64,7 +64,7 @@ Relations
 Relations
 -
 -user_id
--subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>765</x><y>549</y><w>189</w><h>135</h></coordinates><panel_attributes>Post
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>765</x><y>513</y><w>189</w><h>135</h></coordinates><panel_attributes>Post
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
@@ -73,7 +73,7 @@ Relations
 --
 Relations
 -
--user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>405</y><w>189</w><h>135</h></coordinates><panel_attributes>Like
+-user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>576</x><y>711</y><w>189</w><h>135</h></coordinates><panel_attributes>Like
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
@@ -88,12 +88,13 @@ user.id</panel_attributes><additional_attributes></additional_attributes></eleme
 -name: string
 -tag: FOREIGN KEY
 -user: FOREIGN KEY
-
+-like: FOREIGN KEY
 --
 Relations
 -
 -tag_id
--user_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>27</x><y>549</y><w>153</w><h>81</h></coordinates><panel_attributes>Tag
+-user_id
+-like_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>27</x><y>549</y><w>153</w><h>81</h></coordinates><panel_attributes>Tag
 --
 -id: BigInt @unique
 -name: string
@@ -101,7 +102,7 @@ Relations
 --
 -id: BigInt @unique
 -tag_id
--galery_id
+-gallery_id
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>549</x><y>351</y><w>189</w><h>117</h></coordinates><panel_attributes>Follow
 --
 -follower_id: BigInt @unique
@@ -134,10 +135,10 @@ m2=0..n
 &lt; send and receive &gt;</panel_attributes><additional_attributes>10;110;150;110;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>252</y><w>207</w><h>117</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=1
-each user is assigned &gt;</panel_attributes><additional_attributes>10;10;80;10;80;110</additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>216</y><w>270</w><h>351</h></coordinates><panel_attributes>lt=-&gt;&gt;
+each user is assigned &gt;</panel_attributes><additional_attributes>10;10;80;10;80;110</additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>216</y><w>270</w><h>315</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
-can post &gt;</panel_attributes><additional_attributes>10;10;220;10;220;370</additional_attributes></element><element><id>Relation</id><coordinates><x>225</x><y>45</y><w>234</w><h>45</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+can post &gt;</panel_attributes><additional_attributes>10;10;220;10;220;330</additional_attributes></element><element><id>Relation</id><coordinates><x>225</x><y>45</y><w>234</w><h>45</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=1..n
 &lt; has &gt;</panel_attributes><additional_attributes>10;20;240;20</additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>45</y><w>153</w><h>45</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
@@ -152,4 +153,10 @@ m2=1..n
 &lt; has &gt;</panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>387</x><y>270</y><w>216</w><h>360</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
-can add &gt;</panel_attributes><additional_attributes>160;10;160;370;10;370</additional_attributes></element></diagram>
+can add &gt;</panel_attributes><additional_attributes>160;10;160;370;10;370</additional_attributes></element><element><id>Relation</id><coordinates><x>387</x><y>648</y><w>315</w><h>81</h></coordinates><panel_attributes>lt=-&gt;&gt;
+m1=1..n
+m2=0..n
+can have &gt;</panel_attributes><additional_attributes>10;20;310;20;310;70</additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>171</y><w>405</w><h>306</h></coordinates><panel_attributes>lt=-&gt;&gt;
+m1=1..n
+m2=0..n
+can be in &gt;</panel_attributes><additional_attributes>10;10;290;10;290;310;430;310</additional_attributes></element></diagram>
