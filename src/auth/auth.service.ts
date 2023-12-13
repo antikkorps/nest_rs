@@ -64,7 +64,7 @@ export class AuthService {
     //if password incorrect, throw an exception
 
     // Get the user roles
-    const userRoles = user.roles.map(role => role.roleId.toString());
+    const userRoles = user.roles.map(role => role.roleSlug.toString());
     // Join it in one strnig
     const concatenatedRoles = userRoles.join(','); 
 

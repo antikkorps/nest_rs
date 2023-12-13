@@ -90,15 +90,18 @@ model Role {
 
 model RoleUser {
   userId Int
-  roleId Int
+  // roleId Int
+
+  roleSlug String
 
   user User @relation(fields: [userId], references: [id])
-  role Role @relation(fields: [roleId], references: [id])
+  // role Role @relation(fields: [roleId], references: [id])
+  role Role @relation(fields: [roleSlug], references: [slug])
 
   assignedAt DateTime @default(now())
   assignedBy String?
 
-  @@id([userId, roleId])
+  @@id([userId, roleSlug])
 }
 
 model Authorization {
