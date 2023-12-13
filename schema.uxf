@@ -68,16 +68,18 @@ Relations
 Relations
 -
 -user_id
--subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>765</x><y>684</y><w>189</w><h>135</h></coordinates><panel_attributes>Post
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>765</x><y>684</y><w>189</w><h>153</h></coordinates><panel_attributes>Post
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
 -description: string
+-image:[]
 
 --
 Relations
 -
--user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>576</x><y>882</y><w>189</w><h>135</h></coordinates><panel_attributes>Like
+-user.id
+-image.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>576</x><y>882</y><w>189</w><h>135</h></coordinates><panel_attributes>Like
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
@@ -85,7 +87,7 @@ Relations
 --
 Relations
 -
-user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>207</x><y>684</y><w>189</w><h>171</h></coordinates><panel_attributes>Image Gallery
+user.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>207</x><y>684</y><w>189</w><h>171</h></coordinates><panel_attributes>Image
 --
 -id: BigInt @unique
 -url: string
@@ -185,4 +187,8 @@ Relations
 -user_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>486</x><y>9</y><w>126</w><h>162</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=0..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;160;10;10;120;10</additional_attributes></element></diagram>
+&lt; has &gt;</panel_attributes><additional_attributes>10;160;10;10;120;10</additional_attributes></element><element><id>Relation</id><coordinates><x>387</x><y>783</y><w>396</w><h>45</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+m1=1..n
+m2=1..n
+&lt; can have
+can be in &gt;</panel_attributes><additional_attributes>10;20;420;20</additional_attributes></element></diagram>
