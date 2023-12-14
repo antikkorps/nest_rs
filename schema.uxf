@@ -1,15 +1,17 @@
-<diagram program="umletino" version="15.1"><zoom_level>7</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>624</x><y>147</y><w>147</w><h>238</h></coordinates><panel_attributes>User
+<diagram program="umletino" version="15.1"><zoom_level>7</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>679</x><y>147</y><w>147</w><h>245</h></coordinates><panel_attributes>User
 --
 -id: BigInt @unique
--lastname: string 
--firstname: string
--birth: date
--sex: string
--email: email @unique
+-lastname: VARCHAR
+-firstname: VARCHAR
+-birth: DATE
+-sex: VARCHAR
+-email: EMAIL @unique
 -password: hash
--webpage: string
--created_at
--updated_at
+-webpage: STRING
+-banner_image: STRING
+-profile_image: STRING
+-created_at: DATE
+-updated_at: DATE
 -roles: FOREIGN KEY
 -subscription: FOREIGN KEY
 -profile_image: FOREIGN KEY
@@ -19,9 +21,7 @@
 Relations
 --
 -role.id
--subscription.id
--profile_image.id
--banner_image.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1065</x><y>455</y><w>147</w><h>161</h></coordinates><panel_attributes>Salon
+-subscription.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1120</x><y>462</y><w>147</w><h>161</h></coordinates><panel_attributes>Salon
 --
 -id: BigInt @unique
 -name: string
@@ -34,7 +34,7 @@ Relations
 --
 Relations
 -user_id
--gallery_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>316</x><y>168</y><w>147</w><h>91</h></coordinates><panel_attributes>Role
+-gallery_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>371</x><y>98</y><w>147</w><h>91</h></coordinates><panel_attributes>Role
 --
 -id: BigInt @unique
 -name: string
@@ -42,11 +42,11 @@ Relations
 -authorization: FOREIGN KEY
 --
 Relations
--authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>316</x><y>308</y><w>147</w><h>56</h></coordinates><panel_attributes>Authorization
+-authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>371</x><y>259</y><w>147</w><h>56</h></coordinates><panel_attributes>Authorization
 --
 -id: BigInt @unique
 -name: string
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1254</x><y>217</y><w>147</w><h>105</h></coordinates><panel_attributes>Subscription
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1309</x><y>224</y><w>147</w><h>105</h></coordinates><panel_attributes>Subscription
 --
 -id: BigInt @unique
 -name: string
@@ -55,7 +55,7 @@ Relations
 -price: float
 --
 Relations
--authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>918</x><y>112</y><w>203</w><h>161</h></coordinates><panel_attributes>SubscriptionUser
+-authorization_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>973</x><y>119</y><w>203</w><h>161</h></coordinates><panel_attributes>SubscriptionUser
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
@@ -70,7 +70,7 @@ Relations
 Relations
 -
 -user_id
--subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>876</x><y>560</y><w>147</w><h>119</h></coordinates><panel_attributes>Post
+-subscription_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>931</x><y>567</y><w>147</w><h>119</h></coordinates><panel_attributes>Post
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
@@ -81,17 +81,22 @@ Relations
 Relations
 -
 -user.id
--image.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>729</x><y>714</y><w>147</w><h>105</h></coordinates><panel_attributes>Like
+-image.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>784</x><y>721</y><w>147</w><h>161</h></coordinates><panel_attributes>Like
 --
 -id: BigInt @unique
 -user: FOREIGN KEY
+-liked_item: STRING
 -image_gallery: FOREIGN KEY
+-image: FOREIGN KEY
+-post: FOREIGN KEY
 
 --
 Relations
 -
 user.id
-image_gallery.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>442</x><y>560</y><w>147</w><h>133</h></coordinates><panel_attributes>Image_gallery
+image.id
+image_gallery.id
+post.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>497</x><y>567</y><w>147</w><h>133</h></coordinates><panel_attributes>Image_gallery
 --
 -id: BigInt @unique
 -url: [string]
@@ -104,16 +109,16 @@ Relations
 -
 -tag_id
 -user_id
--like_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>302</x><y>588</y><w>119</w><h>63</h></coordinates><panel_attributes>Tag
+-like_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>357</x><y>595</y><w>119</w><h>63</h></coordinates><panel_attributes>Tag
 --
 -id: BigInt @unique
 -name: string
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>358</x><y>728</y><w>147</w><h>63</h></coordinates><panel_attributes>Gallery_Tag
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>413</x><y>735</y><w>147</w><h>63</h></coordinates><panel_attributes>Gallery_Tag
 --
 -id: BigInt @unique
 -tag_id
 -gallery_id
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>743</x><y>434</y><w>147</w><h>91</h></coordinates><panel_attributes>Follow
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>798</x><y>441</y><w>147</w><h>91</h></coordinates><panel_attributes>Follow
 --
 -follower_id: BigInt @unique
 -followed_id : BigInt @unique
@@ -123,13 +128,13 @@ Relations
 -
 user.id
 all Relations correspond to a user
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>498</x><y>686</y><w>98</w><h>105</h></coordinates><panel_attributes>lt=&lt;&lt;-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>553</x><y>693</y><w>98</w><h>105</h></coordinates><panel_attributes>lt=&lt;&lt;-
 m1=1..n
 m2=0..1
-has </panel_attributes><additional_attributes>10;120;100;120;100;10</additional_attributes></element><element><id>Relation</id><coordinates><x>316</x><y>644</y><w>56</w><h>126</h></coordinates><panel_attributes>lt=&lt;&lt;-
+has </panel_attributes><additional_attributes>10;120;100;120;100;10</additional_attributes></element><element><id>Relation</id><coordinates><x>371</x><y>651</y><w>56</w><h>126</h></coordinates><panel_attributes>lt=&lt;&lt;-
 m1=1..n
 m2=1..n
-has</panel_attributes><additional_attributes>60;150;10;150;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>407</x><y>406</y><w>147</w><h>105</h></coordinates><panel_attributes>Instant messages
+has</panel_attributes><additional_attributes>60;150;10;150;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>462</x><y>399</y><w>147</w><h>105</h></coordinates><panel_attributes>Instant messages
 --
 -id: BigInt @unique
 -message: string
@@ -139,63 +144,41 @@ has</panel_attributes><additional_attributes>60;150;10;150;10;10</additional_att
 Relations
 -
 -user.id
- </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>547</x><y>378</y><w>140</w><h>91</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+ </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>602</x><y>385</y><w>133</w><h>77</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=0..n
 m2=0..n
-&lt; send and receive &gt;</panel_attributes><additional_attributes>10;100;150;100;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>764</x><y>343</y><w>140</w><h>105</h></coordinates><panel_attributes>lt=-&gt;&gt;
+&lt; send and receive &gt;</panel_attributes><additional_attributes>10;80;150;80;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>350</y><w>140</w><h>105</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=1
-each user is assigned &gt;</panel_attributes><additional_attributes>10;20;120;20;120;130</additional_attributes></element><element><id>Relation</id><coordinates><x>764</x><y>329</y><w>210</w><h>245</h></coordinates><panel_attributes>lt=-&gt;&gt;
+each user is assigned &gt;</panel_attributes><additional_attributes>10;20;120;20;120;130</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>336</y><w>210</w><h>245</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
-can post &gt;</panel_attributes><additional_attributes>10;10;220;10;220;330</additional_attributes></element><element><id>Relation</id><coordinates><x>456</x><y>196</y><w>182</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+can post &gt;</panel_attributes><additional_attributes>10;10;220;10;220;330</additional_attributes></element><element><id>Relation</id><coordinates><x>511</x><y>133</y><w>182</w><h>105</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=1..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;20;240;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1114</x><y>245</y><w>154</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+&lt; has &gt;</panel_attributes><additional_attributes>10;10;170;10;170;120;240;120</additional_attributes></element><element><id>Relation</id><coordinates><x>1169</x><y>252</y><w>154</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=0..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;20;200;20</additional_attributes></element><element><id>Relation</id><coordinates><x>764</x><y>203</y><w>168</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+&lt; has &gt;</panel_attributes><additional_attributes>10;20;200;20</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>210</y><w>168</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=1..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;20;220;20</additional_attributes></element><element><id>Relation</id><coordinates><x>372</x><y>252</y><w>56</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+&lt; has &gt;</panel_attributes><additional_attributes>10;20;220;20</additional_attributes></element><element><id>Relation</id><coordinates><x>427</x><y>182</y><w>56</w><h>91</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=1..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>582</x><y>378</y><w>168</w><h>273</h></coordinates><panel_attributes>lt=-&gt;&gt;
+&lt; has &gt;</panel_attributes><additional_attributes>10;110;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>637</x><y>385</y><w>189</w><h>273</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
-can add &gt;</panel_attributes><additional_attributes>160;10;160;360;10;360</additional_attributes></element><element><id>Relation</id><coordinates><x>582</x><y>665</y><w>245</w><h>63</h></coordinates><panel_attributes>lt=-&gt;&gt;
+can add &gt;</panel_attributes><additional_attributes>190;10;190;360;10;360</additional_attributes></element><element><id>Relation</id><coordinates><x>637</x><y>672</y><w>245</w><h>63</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
-can have &gt;</panel_attributes><additional_attributes>10;20;310;20;310;70</additional_attributes></element><element><id>Relation</id><coordinates><x>764</x><y>308</y><w>315</w><h>224</h></coordinates><panel_attributes>lt=-&gt;&gt;
+can have &gt;</panel_attributes><additional_attributes>10;20;310;20;310;70</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>315</y><w>315</w><h>224</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
-can be in &gt;</panel_attributes><additional_attributes>10;10;290;10;290;290;430;290</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1247</x><y>98</y><w>147</w><h>84</h></coordinates><panel_attributes>profile_image
---
--id: BigInt @unique
--name: string
--url: string
---
-Relations
---
--user_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>729</x><y>91</y><w>532</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
-m1=1..n
-m2=0..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;80;10;20;340;20;740;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>743</x><y>0</y><w>147</w><h>84</h></coordinates><panel_attributes>banner_image
---
--id: BigInt @unique
--name: string
--url: string
---
-Relations
---
--user_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>659</x><y>7</y><w>98</w><h>154</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
-m1=1..n
-m2=0..n
-&lt; has &gt;</panel_attributes><additional_attributes>10;200;10;10;120;10</additional_attributes></element><element><id>Relation</id><coordinates><x>582</x><y>637</y><w>308</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+can be in &gt;</panel_attributes><additional_attributes>10;10;290;10;290;290;430;290</additional_attributes></element><element><id>Relation</id><coordinates><x>637</x><y>644</y><w>308</w><h>35</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1..n
 m2=1..n
 &lt; can have
-can be in &gt;</panel_attributes><additional_attributes>10;20;420;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1051</x><y>679</y><w>147</w><h>119</h></coordinates><panel_attributes>saved_post
+can be in &gt;</panel_attributes><additional_attributes>10;20;420;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1106</x><y>686</y><w>147</w><h>119</h></coordinates><panel_attributes>saved_post
 Bookmark
 --
 -id: BigInt @unique
@@ -206,15 +189,40 @@ Bookmark
 Relations
 -
 -user.id
--post.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>925</x><y>672</y><w>140</w><h>119</h></coordinates><panel_attributes>lt=-&gt;&gt;
+-post.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>980</x><y>679</y><w>140</w><h>119</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=0..n
 m2=0..1
-can be &gt;</panel_attributes><additional_attributes>20;10;20;140;180;140</additional_attributes></element><element><id>Relation</id><coordinates><x>764</x><y>280</y><w>511</w><h>455</h></coordinates><panel_attributes>lt=-&gt;&gt;
+can be &gt;</panel_attributes><additional_attributes>20;10;20;140;180;140</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>287</y><w>511</w><h>455</h></coordinates><panel_attributes>lt=-&gt;&gt;
 m1=1..n
 m2=0..n
 can have &gt;
-&lt; can be saved by</panel_attributes><additional_attributes>10;10;420;10;420;210;710;210;710;620;620;620</additional_attributes></element><element><id>Relation</id><coordinates><x>204</x><y>329</y><w>539</w><h>567</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+&lt; can be saved by</panel_attributes><additional_attributes>10;10;420;10;420;210;710;210;710;620;620;620</additional_attributes></element><element><id>Relation</id><coordinates><x>238</x><y>336</y><w>560</w><h>567</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=1
 m2=0..n
 has &gt;
-&lt; Can have</panel_attributes><additional_attributes>600;10;480;10;480;80;10;80;10;790;580;790;580;630;750;630</additional_attributes></element></diagram>
+&lt; Can have</panel_attributes><additional_attributes>630;10;10;10;10;790;610;790;610;630;780;630</additional_attributes></element><element><id>Relation</id><coordinates><x>924</x><y>679</y><w>91</w><h>140</h></coordinates><panel_attributes>lt=-&gt;&gt;
+m1=1..n
+m2=0..n
+can have &gt;</panel_attributes><additional_attributes>50;10;50;170;10;170</additional_attributes></element><element><id>UMLClass</id><coordinates><x>280</x><y>441</y><w>147</w><h>133</h></coordinates><panel_attributes>Image
+--
+-id: BigInt @unique
+-url: STRING
+-name: STRING
+-tag: FOREIGN KEY
+-user: FOREIGN KEY
+-like: FOREIGN KEY
+--
+Relations
+-
+-tag_id
+-user_id
+-like_id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>420</x><y>385</y><w>350</w><h>161</h></coordinates><panel_attributes>lt=-&gt;&gt;
+m1=1..n
+m2=0..n
+can add &gt;</panel_attributes><additional_attributes>460;10;460;200;10;200</additional_attributes></element><element><id>Relation</id><coordinates><x>308</x><y>567</y><w>224</w><h>287</h></coordinates><panel_attributes>lt=&lt;&lt;-
+m1=1..n
+m2=0..1
+has </panel_attributes><additional_attributes>280;330;280;390;10;390;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>420</x><y>532</y><w>329</w><h>91</h></coordinates><panel_attributes>lt=-&gt;&gt;
+m1=1..n
+m2=0..n
+can be added into &gt;</panel_attributes><additional_attributes>10;20;450;20;450;100;320;100</additional_attributes></element></diagram>
