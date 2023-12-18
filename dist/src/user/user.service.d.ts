@@ -10,6 +10,7 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
+        webpage: string;
         createdAt: Date;
         updatedAt: Date;
         avatar: string;
@@ -30,6 +31,7 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
+        webpage: string;
         createdAt: Date;
         updatedAt: Date;
         avatar: string;
@@ -43,6 +45,7 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
+        webpage: string;
         createdAt: Date;
         updatedAt: Date;
         avatar: string;
@@ -56,6 +59,7 @@ export declare class UserService {
         lastName: string;
         password: string;
         resetToken: string;
+        webpage: string;
         createdAt: Date;
         updatedAt: Date;
         avatar: string;
