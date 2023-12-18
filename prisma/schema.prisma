@@ -36,6 +36,9 @@ model User {
   posts     Post[]      @relation("userPost")
   savedPost SavedPost[] @relation("userSavedPost")
 
+  messages_emitted    InstantMessage[] @relation("EmitterMessages")
+  messages_received   InstantMessage[] @relation("ReceiverMessages")
+
   @@map("users")
 }
 
@@ -49,6 +52,8 @@ model Post {
   userSavedPost SavedPost[] @relation("userSavedPost")
 
   tags PostTag[] @relation("postTag")
+
+  @@map("posts")
 }
 
 // polymorphic?
@@ -62,12 +67,26 @@ model Tag {
   slug String @unique
 
   posts PostTag[] @relation("tagSlug")
+
+  @@map("tags")
 }
 
-// model InstantMessage {
-//   id Int @id @default(autoincrement())
-//   message String
-// }
+model InstantMessage {
+  id        Int      @id @default(autoincrement())
+  message   String
+  emoji     String?  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  userEmitter   User @relation("EmitterMessages", fields: [emitterId], references: [id], onDelete: Cascade)
+  emitterId        Int
+
+  userReceiver User @relation("ReceiverMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId        Int  
+
+  @@map("instant_messages")
+}
 
 // TABLES ABONNEMENT
 model SubscriptionUser {
@@ -83,6 +102,9 @@ model SubscriptionUser {
 
   subscriptionId Int
   subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@unique([userId, subscriptionId])
+  @@map("subscriptions_users")
 }
 
 model Subscription {
@@ -92,6 +114,8 @@ model Subscription {
   price          Float
   users          SubscriptionUser[]
   authorizations AuthorizationSubscription[] // Relation many-to-many
+
+  @@map("subscriptions")
 }
 
 model Salon {
@@ -103,6 +127,8 @@ model Salon {
   country String
   userId  Int
   user    User    @relation("userToSalons", fields: [userId], references: [id])
+
+  @@map("salons")
 }
 
 // TABLES PERMISSIONS
@@ -113,6 +139,8 @@ model Role {
   authorizations AuthorizationRole[]
 
   users RoleUser[]
+
+  @@map("roles")
 }
 
 model RoleUser {
@@ -129,6 +157,7 @@ model RoleUser {
   assignedBy String?
 
   @@id([userId, roleSlug])
+  @@map("roles_users")
 }
 
 model Authorization {
@@ -137,6 +166,8 @@ model Authorization {
   slug          String                      @unique
   roles         AuthorizationRole[]
   subscriptions AuthorizationSubscription[] // Relation many-to-many
+
+  @@map("authorizations")
 }
 
 // TABLES PIVOTS
@@ -170,6 +201,8 @@ model ProfileImage {
   status Boolean @default(false)
   userId Int
   user   User    @relation("profileImage", fields: [userId], references: [id])
+
+  @@map("profileImages")
 }
 
 model MediaPost {
@@ -179,6 +212,8 @@ model MediaPost {
   status Boolean @default(false)
   postId Int
   post   Post    @relation("mediaPost", fields: [postId], references: [id])
+
+  @@map("mediaPosts")
 }
 
 model BannerImage {
@@ -188,6 +223,8 @@ model BannerImage {
   status Boolean @default(false)
   userId Int
   user   User    @relation("bannerImage", fields: [userId], references: [id])
+
+  @@map("bannerImages")
 }
 
 model Follow {
@@ -197,6 +234,9 @@ model Follow {
 
   followedId Int
   followed   User @relation("followedId", fields: [followedId], references: [id])
+
+  @@unique([followerId, followedId])
+  @@map("follows")
 }
 
 model SavedPost {
@@ -206,6 +246,9 @@ model SavedPost {
 
   postId Int
   post   Post @relation("userSavedPost", fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+  @@map("savedPosts")
 }
 
 model PostTag {
@@ -216,6 +259,9 @@ model PostTag {
 
   tagSlug String
   tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
+
+  @@unique([postId, tagSlug])
+  @@map("postsTags")
 }
 
 //  Autre tables
@@ -227,4 +273,6 @@ model Contact {
   phone   String?
   purpose String?
   message String?
+
+  @@map("contacts")
 }
