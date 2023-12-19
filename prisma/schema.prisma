@@ -91,7 +91,7 @@ emojiContents EmojiContent[]
 }
 
 model TextContent {
- id Int @id @default(autoincrement())  
+  id Int @id @default(autoincrement())  
 
   text String
 
