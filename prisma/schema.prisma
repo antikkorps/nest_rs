@@ -10,6 +10,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//Schema
+
+//User data
 model User {
   id            Int                @id @default(autoincrement())
   email         String             @unique 
@@ -35,6 +38,7 @@ model User {
 
   posts     Post[]      @relation("userPost")
   savedPost SavedPost[] @relation("userSavedPost")
+  userComments Comment[] @relation("userComments")
 
   messages_emitted    InstantMessage[] @relation("EmitterMessages")
   messages_received   InstantMessage[] @relation("ReceiverMessages")
@@ -43,12 +47,15 @@ model User {
   @@index(fields: [firstName, lastName, email], name: "main_user_index")
 }
 
+// Everything related to posts, comments && likes
 model Post {
   id          Int         @id @default(autoincrement())
   description String?
   userId      Int
   user        User        @relation("userPost", fields: [userId], references: [id])
   mediaPost   MediaPost[] @relation("mediaPost")
+
+  comments Comment[] @relation("postComment")
 
   userSavedPost SavedPost[] @relation("userSavedPost")
 
@@ -58,10 +65,57 @@ model Post {
   @@map("posts")
 }
 
+model MediaPost {
+  id     Int     @id @default(autoincrement())
+  url    String
+  name   String?
+  status Boolean @default(false)
+  postId Int
+  post   Post    @relation("mediaPost", fields: [postId], references: [id])
+
+  @@map("mediaPosts")
+}
+
+model SavedPost {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation("userSavedPost", fields: [userId], references: [id])
+
+  postId Int
+  post   Post @relation("userSavedPost", fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+  @@map("savedPosts")
+}
+
+model PostTag {
+  id Int @id @default(autoincrement())
+
+  postId Int
+  post   Post @relation("postTag", fields: [postId], references: [id])
+
+  tagSlug String
+  tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
+
+  @@unique([postId, tagSlug])
+  @@map("postsTags")
+}
+
 // polymorphic?
 // model Like {
 
 // }
+
+model Comment {
+  id          Int     @id @default(autoincrement())
+  description String?
+  postId      Int
+  post        Post    @relation("postComment", fields: [postId], references: [id])
+  userId      Int
+  userComments        User    @relation("userComments", fields: [userId], references: [id])
+
+  @@map("comments")
+}
 
 model Tag {
   id   Int    @id @default(autoincrement())
@@ -259,17 +313,6 @@ model ProfileImage {
   @@map("profileImages")
 }
 
-model MediaPost {
-  id     Int     @id @default(autoincrement())
-  url    String
-  name   String?
-  status Boolean @default(false)
-  postId Int
-  post   Post    @relation("mediaPost", fields: [postId], references: [id])
-
-  @@map("mediaPosts")
-}
-
 enum BannerStatus {
   ACTIVE
   INACTIVE
@@ -296,31 +339,6 @@ model Follow {
 
   @@unique([followerId, followedId])
   @@map("follows")
-}
-
-model SavedPost {
-  id     Int  @id @default(autoincrement())
-  userId Int
-  user   User @relation("userSavedPost", fields: [userId], references: [id])
-
-  postId Int
-  post   Post @relation("userSavedPost", fields: [postId], references: [id])
-
-  @@unique([userId, postId])
-  @@map("savedPosts")
-}
-
-model PostTag {
-  id Int @id @default(autoincrement())
-
-  postId Int
-  post   Post @relation("postTag", fields: [postId], references: [id])
-
-  tagSlug String
-  tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
-
-  @@unique([postId, tagSlug])
-  @@map("postsTags")
 }
 
 //  Autre tables
