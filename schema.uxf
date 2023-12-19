@@ -124,18 +124,18 @@ Relations
 -
 user.id
 all Relations correspond to a user
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>320</x><y>430</y><w>210</w><h>150</h></coordinates><panel_attributes>Instant messages
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>320</x><y>430</y><w>210</w><h>170</h></coordinates><panel_attributes>Instant messages
 --
 -id: BigInt @unique
 -message: VARCHAR
--emoji: VARCHAR
+-emoji: FOREIGN KEY
 -user_emitter: FOREIGN KEY
 -user_receiver: FOREIGN KEY
 --
 Relations
 -
 -user.id
- </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>410</y><w>190</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+-emoji.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>410</y><w>190</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
 m1=0..n
 m2=0..n
 &lt; send and receive &gt;</panel_attributes><additional_attributes>10;80;150;80;150;10</additional_attributes></element><element><id>Relation</id><coordinates><x>830</x><y>360</y><w>200</w><h>150</h></coordinates><panel_attributes>lt=-&gt;&gt;
@@ -225,4 +225,13 @@ can be in &gt;</panel_attributes><additional_attributes>10;10;10;40;70;40;70;120
 Relations
 -
 post.id
-media.id</panel_attributes><additional_attributes></additional_attributes></element></diagram>
+media.id</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>30</x><y>550</y><w>210</w><h>70</h></coordinates><panel_attributes>emojis
+--
+-id: BigInt @unique
+-emoji: VARCHAR
+
+
+ </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>130</x><y>590</y><w>240</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;-&gt;&gt;
+m1=0..n
+m2=0..n
+can be in &gt;</panel_attributes><additional_attributes>10;30;10;80;200;80;200;10</additional_attributes></element></diagram>
