@@ -10,9 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//Schema
+
+//User data
 model User {
   id            Int                @id @default(autoincrement())
-  email         String             @unique
+  email         String             @unique 
   firstName     String?
   lastName      String?
   password      String
@@ -33,28 +36,81 @@ model User {
 
   roles RoleUser[]
 
-  posts     Post[]      @relation("userPost")
-  savedPost SavedPost[] @relation("userSavedPost")
+  posts     Post[]      @relation("posts")
+  savedPost SavedPost[] @relation("userSavedPosts")
+  userComments Comment[] @relation("userComments")
+  userlikes Like[] @relation("userLiking")
 
+  messages_emitted    InstantMessage[] @relation("EmitterMessages")
+  messages_received   InstantMessage[] @relation("ReceiverMessages")
+  
   @@map("users")
+  @@index(fields: [firstName, lastName, email], name: "main_user_index")
 }
 
+// Everything related to posts, comments && likes
 model Post {
-  id          Int         @id @default(autoincrement())
-  description String?
-  userId      Int
-  user        User        @relation("userPost", fields: [userId], references: [id])
-  mediaPost   MediaPost[] @relation("mediaPost")
+  id             Int         @id @default(autoincrement())
+  description    String?
+  userId         Int
+  user           User        @relation("posts", fields: [userId], references: [id])
+  mediaPosts     MediaPost[] @relation("mediaPost")
+  likes          Like[]      @relation("postLikes")
+  likedItemId    Int 
+  comments       Comment[]   @relation("postComments")
+  userSavedPosts SavedPost[]  @relation("userSavedPosts")
+  tags           PostTag[]   @relation("postTags")
 
-  userSavedPost SavedPost[] @relation("userSavedPost")
-
-  tags PostTag[] @relation("postTag")
+  @@index([userId, id], name: "main_post_index")
+  @@map("posts")
 }
 
-// polymorphic?
-// model Like {
+model MediaPost {
+  id     Int     @id @default(autoincrement())
+  url    String
+  name   String?
+  status Boolean @default(false)
+  postId Int
+  post   Post    @relation("mediaPost", fields: [postId], references: [id])
 
-// }
+  @@map("mediaPosts")
+}
+
+model SavedPost {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation("userSavedPosts", fields: [userId], references: [id])
+
+  postId Int
+  post   Post @relation("userSavedPosts", fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+  @@map("savedPosts")
+}
+
+model PostTag {
+  id Int @id @default(autoincrement())
+
+  postId Int
+  post   Post @relation("postTags", fields: [postId], references: [id])
+
+  tagSlug String
+  tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
+
+  @@unique([postId, tagSlug])
+  @@map("postsTags")
+}
+
+model Comment {
+  id          Int     @id @default(autoincrement())
+  description String?
+  postId      Int
+  post        Post    @relation("postComments", fields: [postId], references: [id])
+  userId      Int
+  user        User    @relation("userComments", fields: [userId], references: [id])
+
+  @@map("comments")
+}
 
 model Tag {
   id   Int    @id @default(autoincrement())
@@ -62,12 +118,97 @@ model Tag {
   slug String @unique
 
   posts PostTag[] @relation("tagSlug")
+
+  @@map("tags")
 }
 
-// model InstantMessage {
-//   id Int @id @default(autoincrement())
-//   message String
-// }
+// Polymorphic like
+model Like {
+  id             Int       @id @default(autoincrement())
+  likeType       LikeType
+  likedItemId    Int
+  userLiking     User      @relation("userLiking", fields: [userId], references: [id])
+  userId         Int
+  createdAt      DateTime  @default(now())
+  
+  post Post? @relation("postLikes", fields: [likedItemId], references: [id])
+
+  @@index([userId, likedItemId], name: "main_like_index")
+  @@unique([userId, likedItemId])
+  @@map("likes")
+}
+
+enum LikeType {
+  POST
+  COMMENT
+  MEDIA
+  IMAGE
+  INSTANT_MESSAGE
+}
+
+//Polymorphic message content
+//MessageContent hold the content of the polymorphic message and is referenced in InstantMessage 
+//TextContent and EmojiContent are the polymorphic message content
+
+model MessageContent {
+  id Int @id
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+instantMessage InstantMessage @relation(fields: [instantMessageId], references: [id], onDelete: Cascade)
+instantMessageId Int 
+
+textContents TextContent[]
+emojiContents EmojiContent[]
+}
+
+model TextContent {
+  id Int @id @default(autoincrement())  
+
+  text String
+
+  messageContent MessageContent @relation(fields: [messageContentId], references: [id])
+  messageContentId Int
+}
+
+model EmojiContent {
+  emoji  Emoji @relation(fields: [emojiId], references: [id])
+  emojiId Int
+
+  messageContent MessageContent @relation(fields: [messageContentId], references: [id])
+  messageContentId Int
+
+  @@id([emojiId, messageContentId])
+}
+
+model InstantMessage {
+  id        Int      @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  userEmitter   User @relation("EmitterMessages", fields: [emitterId], references: [id], onDelete: Cascade)
+  emitterId        Int
+
+  userReceiver User @relation("ReceiverMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId        Int  
+
+  contents MessageContent[]
+
+  @@map("instant_messages")
+}
+
+model Emoji {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  emojiContents EmojiContent[]
+
+  @@index([name, slug], name: "main_emoji_index")
+  @@map("emojis")
+}
 
 // TABLES ABONNEMENT
 model SubscriptionUser {
@@ -83,6 +224,9 @@ model SubscriptionUser {
 
   subscriptionId Int
   subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@unique([userId, subscriptionId])
+  @@map("subscriptions_users")
 }
 
 model Subscription {
@@ -92,6 +236,8 @@ model Subscription {
   price          Float
   users          SubscriptionUser[]
   authorizations AuthorizationSubscription[] // Relation many-to-many
+
+  @@map("subscriptions")
 }
 
 model Salon {
@@ -103,6 +249,8 @@ model Salon {
   country String
   userId  Int
   user    User    @relation("userToSalons", fields: [userId], references: [id])
+
+  @@map("salons")
 }
 
 // TABLES PERMISSIONS
@@ -113,6 +261,8 @@ model Role {
   authorizations AuthorizationRole[]
 
   users RoleUser[]
+
+  @@map("roles")
 }
 
 model RoleUser {
@@ -129,6 +279,7 @@ model RoleUser {
   assignedBy String?
 
   @@id([userId, roleSlug])
+  @@map("roles_users")
 }
 
 model Authorization {
@@ -137,6 +288,8 @@ model Authorization {
   slug          String                      @unique
   roles         AuthorizationRole[]
   subscriptions AuthorizationSubscription[] // Relation many-to-many
+
+  @@map("authorizations")
 }
 
 // TABLES PIVOTS
@@ -163,31 +316,36 @@ model AuthorizationSubscription {
   @@unique([subscriptionId, authorizationId])
 }
 
+enum ImageStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
 model ProfileImage {
   id     Int     @id @default(autoincrement())
   url    String
   name   String?
-  status Boolean @default(false)
+  status ImageStatus @default(ACTIVE)
   userId Int
   user   User    @relation("profileImage", fields: [userId], references: [id])
+
+  @@map("profileImages")
 }
 
-model MediaPost {
-  id     Int     @id @default(autoincrement())
-  url    String
-  name   String?
-  status Boolean @default(false)
-  postId Int
-  post   Post    @relation("mediaPost", fields: [postId], references: [id])
+enum BannerStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
-
 model BannerImage {
   id     Int     @id @default(autoincrement())
   url    String
   name   String?
-  status Boolean @default(false)
+  status BannerStatus @default(ACTIVE)
   userId Int
   user   User    @relation("bannerImage", fields: [userId], references: [id])
+
+  @@map("bannerImages")
 }
 
 model Follow {
@@ -197,25 +355,9 @@ model Follow {
 
   followedId Int
   followed   User @relation("followedId", fields: [followedId], references: [id])
-}
 
-model SavedPost {
-  id     Int  @id @default(autoincrement())
-  userId Int
-  user   User @relation("userSavedPost", fields: [userId], references: [id])
-
-  postId Int
-  post   Post @relation("userSavedPost", fields: [postId], references: [id])
-}
-
-model PostTag {
-  id Int @id @default(autoincrement())
-
-  postId Int
-  post   Post @relation("postTag", fields: [postId], references: [id])
-
-  tagSlug String
-  tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
+  @@unique([followerId, followedId])
+  @@map("follows")
 }
 
 //  Autre tables
@@ -227,4 +369,6 @@ model Contact {
   phone   String?
   purpose String?
   message String?
+
+  @@map("contacts")
 }
