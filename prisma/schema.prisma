@@ -36,9 +36,10 @@ model User {
 
   roles RoleUser[]
 
-  posts     Post[]      @relation("userPost")
-  savedPost SavedPost[] @relation("userSavedPost")
+  posts     Post[]      @relation("posts")
+  savedPost SavedPost[] @relation("userSavedPosts")
   userComments Comment[] @relation("userComments")
+  userlikes Like[] @relation("userLiking")
 
   messages_emitted    InstantMessage[] @relation("EmitterMessages")
   messages_received   InstantMessage[] @relation("ReceiverMessages")
@@ -49,17 +50,16 @@ model User {
 
 // Everything related to posts, comments && likes
 model Post {
-  id          Int         @id @default(autoincrement())
-  description String?
-  userId      Int
-  user        User        @relation("userPost", fields: [userId], references: [id])
-  mediaPost   MediaPost[] @relation("mediaPost")
-
-  comments Comment[] @relation("postComment")
-
-  userSavedPost SavedPost[] @relation("userSavedPost")
-
-  tags PostTag[] @relation("postTag")
+  id             Int         @id @default(autoincrement())
+  description    String?
+  userId         Int
+  user           User        @relation("posts", fields: [userId], references: [id])
+  mediaPosts     MediaPost[] @relation("mediaPost")
+  likes          Like[]      @relation("postLikes")
+  likedItemId    Int 
+  comments       Comment[]   @relation("postComments")
+  userSavedPosts SavedPost[]  @relation("userSavedPosts")
+  tags           PostTag[]   @relation("postTags")
 
   @@index([userId, id], name: "main_post_index")
   @@map("posts")
@@ -79,10 +79,10 @@ model MediaPost {
 model SavedPost {
   id     Int  @id @default(autoincrement())
   userId Int
-  user   User @relation("userSavedPost", fields: [userId], references: [id])
+  user   User @relation("userSavedPosts", fields: [userId], references: [id])
 
   postId Int
-  post   Post @relation("userSavedPost", fields: [postId], references: [id])
+  post   Post @relation("userSavedPosts", fields: [postId], references: [id])
 
   @@unique([userId, postId])
   @@map("savedPosts")
@@ -92,7 +92,7 @@ model PostTag {
   id Int @id @default(autoincrement())
 
   postId Int
-  post   Post @relation("postTag", fields: [postId], references: [id])
+  post   Post @relation("postTags", fields: [postId], references: [id])
 
   tagSlug String
   tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
@@ -101,18 +101,13 @@ model PostTag {
   @@map("postsTags")
 }
 
-// polymorphic?
-// model Like {
-
-// }
-
 model Comment {
   id          Int     @id @default(autoincrement())
   description String?
   postId      Int
-  post        Post    @relation("postComment", fields: [postId], references: [id])
+  post        Post    @relation("postComments", fields: [postId], references: [id])
   userId      Int
-  userComments        User    @relation("userComments", fields: [userId], references: [id])
+  user        User    @relation("userComments", fields: [userId], references: [id])
 
   @@map("comments")
 }
@@ -125,6 +120,30 @@ model Tag {
   posts PostTag[] @relation("tagSlug")
 
   @@map("tags")
+}
+
+// Polymorphic like
+model Like {
+  id             Int       @id @default(autoincrement())
+  likeType       LikeType
+  likedItemId    Int
+  userLiking     User      @relation("userLiking", fields: [userId], references: [id])
+  userId         Int
+  createdAt      DateTime  @default(now())
+  
+  post Post? @relation("postLikes", fields: [likedItemId], references: [id])
+
+  @@index([userId, likedItemId], name: "main_like_index")
+  @@unique([userId, likedItemId])
+  @@map("likes")
+}
+
+enum LikeType {
+  POST
+  COMMENT
+  MEDIA
+  IMAGE
+  INSTANT_MESSAGE
 }
 
 //Polymorphic message content
