@@ -13,6 +13,12 @@ datasource db {
 //Schema
 
 //User data
+enum Sex {
+  MALE
+  FEMALE
+  OTHER
+  DO_NOT_WANT_TO_SAY
+}
 model User {
   id            Int                @id @default(autoincrement())
   email         String             @unique 
@@ -25,7 +31,7 @@ model User {
   updatedAt     DateTime           @updatedAt
   avatar        String?
   birth         DateTime?
-  sex           String?
+  sex           Sex?
   subscriptions SubscriptionUser[]
   salons        Salon[]            @relation("userToSalons")
   profile_image ProfileImage[]     @relation("profileImage")
