@@ -73,12 +73,44 @@ model Tag {
   @@map("tags")
 }
 
+//Polymorphic message content
+//MessageContent hold the content of the polymorphic message and is referenced in InstantMessage 
+//TextContent and EmojiContent are the polymorphic message content
+
+model MessageContent {
+  id Int @id
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+instantMessage InstantMessage @relation(fields: [instantMessageId], references: [id], onDelete: Cascade)
+instantMessageId Int 
+
+textContents TextContent[]
+emojiContents EmojiContent[]
+}
+
+model TextContent {
+ id Int @id @default(autoincrement())  
+
+  text String
+
+  messageContent MessageContent @relation(fields: [messageContentId], references: [id])
+  messageContentId Int
+}
+
+model EmojiContent {
+  emoji  Emoji @relation(fields: [emojiId], references: [id])
+  emojiId Int
+
+  messageContent MessageContent @relation(fields: [messageContentId], references: [id])
+  messageContentId Int
+
+  @@id([emojiId, messageContentId])
+}
+
 model InstantMessage {
   id        Int      @id @default(autoincrement())
-  message   String  
-
-  emoji Emoji? @relation(fields: [emojiId], references: [id])
-  emojiId Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -89,6 +121,8 @@ model InstantMessage {
   userReceiver User @relation("ReceiverMessages", fields: [receiverId], references: [id], onDelete: Cascade)
   receiverId        Int  
 
+  contents MessageContent[]
+
   @@map("instant_messages")
 }
 
@@ -97,7 +131,7 @@ model Emoji {
   name String @unique
   slug String @unique
 
-  instant_messages InstantMessage[]
+  emojiContents EmojiContent[]
 
   @@index([name, slug], name: "main_emoji_index")
   @@map("emojis")
