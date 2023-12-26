@@ -19,6 +19,7 @@ async function bootstrap() {
       whitelist: true, // Insure to protect from unwanted data
     }),
   );
+  app.setGlobalPrefix('api/v1');
   await app.listen(4000);
 }
 bootstrap();
