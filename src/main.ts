@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:5173'], // URL front-end
+    origin: ['http://localhost:3000'], // URL front-end
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Permettre les cookies
   };
@@ -19,6 +19,6 @@ async function bootstrap() {
       whitelist: true, // Insure to protect from unwanted data
     }),
   );
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();
