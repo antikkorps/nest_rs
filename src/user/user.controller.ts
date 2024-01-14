@@ -18,6 +18,7 @@ import { EditUserDto } from './dto';
 export class UserController {
   constructor(private userService: UserService) {}
   // endpoint users/me
+  @UseGuards(jwtGuard)
   @Get('me')
   getMe(
     @GetUser() user: User,
@@ -39,12 +40,16 @@ export class UserController {
     const id = parseInt(userId, 10);
     return this.userService.getUserById(id);
   }
-
+  // Update User by id
+  @UseGuards(jwtGuard)
   @Patch(':id')
   editUser(@Param('id') userId: string, @Body() dto: EditUserDto) {
     const id = parseInt(userId, 10);
     return this.userService.editUser(id, dto);
   }
+
+  // Delete User by id
+  @UseGuards(jwtGuard)
   @Delete(':id')
   deleteUser(@Param('id') userId: string) {
     const id = parseInt(userId, 10);
