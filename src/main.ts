@@ -9,7 +9,7 @@ async function bootstrap() {
   const corsOptions: CorsOptions = {
     origin: ['http://localhost:3000'], // URL front-end
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Permettre les cookies
+    credentials: true, // allow cookies from front-end
   };
 
   app.enableCors(corsOptions);
