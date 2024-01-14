@@ -19,9 +19,10 @@ enum Sex {
   OTHER
   DO_NOT_WANT_TO_SAY
 }
+
 model User {
   id            Int                @id @default(autoincrement())
-  email         String             @unique 
+  email         String             @unique
   firstName     String?
   lastName      String?
   password      String
@@ -42,16 +43,16 @@ model User {
 
   roles RoleUser[]
 
-  posts     Post[]      @relation("posts")
-  savedPost SavedPost[] @relation("userSavedPosts")
-  userComments Comment[] @relation("userComments")
-  userlikes Like[] @relation("userLiking")
+  posts        Post[]      @relation("posts")
+  savedPost    SavedPost[] @relation("userSavedPosts")
+  userComments Comment[]   @relation("userComments")
+  userlikes    Like[]      @relation("userLiking")
 
-  messages_emitted    InstantMessage[] @relation("EmitterMessages")
-  messages_received   InstantMessage[] @relation("ReceiverMessages")
-  
-  @@map("users")
+  messages_emitted  InstantMessage[] @relation("EmitterMessages")
+  messages_received InstantMessage[] @relation("ReceiverMessages")
+
   @@index(fields: [firstName, lastName, email], name: "main_user_index")
+  @@map("users")
 }
 
 // Everything related to posts, comments && likes
@@ -62,15 +63,46 @@ model Post {
   user           User        @relation("posts", fields: [userId], references: [id])
   mediaPosts     MediaPost[] @relation("mediaPost")
   likes          Like[]      @relation("postLikes")
-  likedItemId    Int 
+  likedItemId    Int
   comments       Comment[]   @relation("postComments")
-  userSavedPosts SavedPost[]  @relation("userSavedPosts")
+  userSavedPosts SavedPost[] @relation("userSavedPosts")
   tags           PostTag[]   @relation("postTags")
+
+  // Add for the post Content by Karl 12/01
+  postTypeChoice PostTypeChoice[] @relation("postType")
 
   @@index([userId, id], name: "main_post_index")
   @@map("posts")
 }
 
+enum PostType {
+  MEDIA
+  TEXT
+  SHAREDPOST
+  SHAREDPROFILE
+  SHAREDMEDIA
+}
+
+model PostTypeChoice {
+  id     Int      @id @default(autoincrement())
+  post   Post     @relation("postType", fields: [postId], references: [id])
+  postId Int
+  type   PostType
+  content PostContent[] @relation("postTypeContent")
+
+  @@map("postTypeChoices")
+}
+
+model PostContent {
+  id         Int            @id @default(autoincrement())
+  postType   PostTypeChoice @relation("postTypeContent", fields: [postTypeId], references: [id])
+  postTypeId Int
+  content    String
+  @@map("postContents")
+}
+
+
+// We certainly can delete this model MediaPost now
 model MediaPost {
   id     Int     @id @default(autoincrement())
   url    String
@@ -130,17 +162,17 @@ model Tag {
 
 // Polymorphic like
 model Like {
-  id             Int       @id @default(autoincrement())
-  likeType       LikeType
-  likedItemId    Int
-  userLiking     User      @relation("userLiking", fields: [userId], references: [id])
-  userId         Int
-  createdAt      DateTime  @default(now())
-  
+  id          Int      @id @default(autoincrement())
+  likeType    LikeType
+  likedItemId Int
+  userLiking  User     @relation("userLiking", fields: [userId], references: [id])
+  userId      Int
+  createdAt   DateTime @default(now())
+
   post Post? @relation("postLikes", fields: [likedItemId], references: [id])
 
-  @@index([userId, likedItemId], name: "main_like_index")
   @@unique([userId, likedItemId])
+  @@index([userId, likedItemId], name: "main_like_index")
   @@map("likes")
 }
 
@@ -162,43 +194,43 @@ model MessageContent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-instantMessage InstantMessage @relation(fields: [instantMessageId], references: [id], onDelete: Cascade)
-instantMessageId Int 
+  instantMessage   InstantMessage @relation(fields: [instantMessageId], references: [id], onDelete: Cascade)
+  instantMessageId Int
 
-textContents TextContent[]
-emojiContents EmojiContent[]
+  textContents  TextContent[]
+  emojiContents EmojiContent[]
 }
 
 model TextContent {
-  id Int @id @default(autoincrement())  
+  id Int @id @default(autoincrement())
 
   text String
 
-  messageContent MessageContent @relation(fields: [messageContentId], references: [id])
+  messageContent   MessageContent @relation(fields: [messageContentId], references: [id])
   messageContentId Int
 }
 
 model EmojiContent {
-  emoji  Emoji @relation(fields: [emojiId], references: [id])
+  emoji   Emoji @relation(fields: [emojiId], references: [id])
   emojiId Int
 
-  messageContent MessageContent @relation(fields: [messageContentId], references: [id])
+  messageContent   MessageContent @relation(fields: [messageContentId], references: [id])
   messageContentId Int
 
   @@id([emojiId, messageContentId])
 }
 
 model InstantMessage {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  userEmitter   User @relation("EmitterMessages", fields: [emitterId], references: [id], onDelete: Cascade)
-  emitterId        Int
+
+  userEmitter User @relation("EmitterMessages", fields: [emitterId], references: [id], onDelete: Cascade)
+  emitterId   Int
 
   userReceiver User @relation("ReceiverMessages", fields: [receiverId], references: [id], onDelete: Cascade)
-  receiverId        Int  
+  receiverId   Int
 
   contents MessageContent[]
 
@@ -327,13 +359,14 @@ enum ImageStatus {
   INACTIVE
   ARCHIVED
 }
+
 model ProfileImage {
-  id     Int     @id @default(autoincrement())
+  id     Int         @id @default(autoincrement())
   url    String
   name   String?
   status ImageStatus @default(ACTIVE)
   userId Int
-  user   User    @relation("profileImage", fields: [userId], references: [id])
+  user   User        @relation("profileImage", fields: [userId], references: [id])
 
   @@map("profileImages")
 }
@@ -343,13 +376,14 @@ enum BannerStatus {
   INACTIVE
   ARCHIVED
 }
+
 model BannerImage {
-  id     Int     @id @default(autoincrement())
+  id     Int          @id @default(autoincrement())
   url    String
   name   String?
   status BannerStatus @default(ACTIVE)
   userId Int
-  user   User    @relation("bannerImage", fields: [userId], references: [id])
+  user   User         @relation("bannerImage", fields: [userId], references: [id])
 
   @@map("bannerImages")
 }
