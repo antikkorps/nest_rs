@@ -43,11 +43,11 @@ model User {
 
   roles RoleUser[]
 
-  posts        Post[]      @relation("posts")
-  savedPost    SavedPost[] @relation("userSavedPosts")
-  userComments Comment[]   @relation("userComments")
-  userlikes    Like[]      @relation("userLiking")
-
+  posts             Post[]           @relation("posts")
+  savedPost         SavedPost[]      @relation("userSavedPosts")
+  userComments      Comment[]        @relation("userComments")
+  userlikes         Like[]           @relation("userLiking")
+  userReports       Report[]         @relation("userReporting")
   messages_emitted  InstantMessage[] @relation("EmitterMessages")
   messages_received InstantMessage[] @relation("ReceiverMessages")
 
@@ -71,6 +71,9 @@ model Post {
   // Add for the post Content by Karl 12/01
   postTypeChoice PostTypeChoice[] @relation("postType")
 
+  views  BigInt?
+  shared BigInt?
+
   @@index([userId, id], name: "main_post_index")
   @@map("posts")
 }
@@ -84,10 +87,10 @@ enum PostType {
 }
 
 model PostTypeChoice {
-  id     Int      @id @default(autoincrement())
-  post   Post     @relation("postType", fields: [postId], references: [id])
-  postId Int
-  type   PostType
+  id      Int           @id @default(autoincrement())
+  post    Post          @relation("postType", fields: [postId], references: [id])
+  postId  Int
+  type    PostType
   content PostContent[] @relation("postTypeContent")
 
   @@map("postTypeChoices")
@@ -98,9 +101,9 @@ model PostContent {
   postType   PostTypeChoice @relation("postTypeContent", fields: [postTypeId], references: [id])
   postTypeId Int
   content    String
+
   @@map("postContents")
 }
-
 
 // We certainly can delete this model MediaPost now
 model MediaPost {
@@ -289,6 +292,23 @@ model Salon {
   user    User    @relation("userToSalons", fields: [userId], references: [id])
 
   @@map("salons")
+}
+
+// MANAGING
+enum ReportType {
+  POST
+  PROFILE
+  MEDIA
+  MESSAGE
+}
+
+model Report {
+  id            Int        @id @default(autoincrement())
+  content       String
+  reportType    ReportType
+  reportItemId  Int
+  userReporting User       @relation("userReporting", fields: [userId], references: [id])
+  userId        Int
 }
 
 // TABLES PERMISSIONS
