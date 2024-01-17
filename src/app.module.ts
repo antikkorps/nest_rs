@@ -15,6 +15,7 @@ import { TagModule } from './tag/tag.module';
 import { PostService } from './post/post.service';
 import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
+import { IsUniqueConstraint } from 'custom_validator/isUnique/is-unique-constraint';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PostModule } from './post/post.module';
   providers: [
     AppService,
     PostService,
+    IsUniqueConstraint
     // ImageService
   ],
 })

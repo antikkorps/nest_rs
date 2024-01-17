@@ -21,7 +21,9 @@ interface PostTagProps {
     tagSlug: string;
     tag: TagProps
 }
-interface UserProps {
+
+
+export interface AuthUserProps {
     id: number;
     email: string;
     firstName?: string;
@@ -30,6 +32,11 @@ interface UserProps {
     avatar?: string;
     birth?: Date;
     sex?: Sex;
+    createdAt: Date;
+    updatedAt: Date;
+    roles?: RoleUserProps[]
+}
+interface UserProps extends AuthUserProps {
     // subscriptions: SubscriptionProps[];
     salons?: SalonProps[];
     profile_image?: ProfileImageProps[];
@@ -37,7 +44,6 @@ interface UserProps {
 
     i_follow?: FollowProps[];
     they_follow?: FollowProps[];
-    roles?: RoleUserProps[]; // Pas sûr car c'est une pivot
     posts?: PostProps[];
     savedPost?: SavedPostProps[];
     userComments?: CommentProps[];
@@ -45,9 +51,8 @@ interface UserProps {
     userReports?: ReportProps[];
     messages_emitted?: InstantMessageProps[];
     messages_received?: InstantMessageProps[];
-
 }
-interface RoleUserProps {
+export interface RoleUserProps {
     userId: number;
     roleSlug: string;
     user: UserProps;

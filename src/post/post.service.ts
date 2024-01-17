@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { PostProps } from "types/all";
 import { CreatePostDto } from "./dto/CreatePost.dto";
 import { toSlug } from "helpers/transformToSlug";
 import { UpdatePostDto } from "./dto/UpdatePost.dto";
+import { isOwner, isOwnerOrSuperAdmin, isSuperAdmin } from "policies/isAdminOrOwner";
 
 
 @Injectable()
@@ -96,16 +97,23 @@ export class PostService {
         });
     }
 
-    async editPost(postId: number, updatePostDto: UpdatePostDto) {
+    async editPost(postId: number, updatePostDto: UpdatePostDto, user) {
         const { description, userId, tags, postBody } = updatePostDto;
 
-        // I tried this to check if the user can update. Is it good ?
-        const verifyPostUser = await this.prisma.post.findUnique({
+        const postToUpdate = await this.prisma.post.findUnique({
             where: { id: postId }
         });
-        if(verifyPostUser.userId !== userId) {
-            return false;
-        }
+
+        if(!postToUpdate) throw new NotFoundException('Post not found');
+        
+        // Check if the User can do this action
+        const isAuthorizeToUpdate = await isOwnerOrSuperAdmin({
+            ownerId: postToUpdate.userId,
+            user: user
+        }); 
+        if(!isAuthorizeToUpdate) throw new ForbiddenException("You don't have permission to edit this post.");
+        
+        
         // I think we must delete the pivot entry and replace by the new, even they're the same
         await this.prisma.postTag.deleteMany({ where: { postId } });
         await this.prisma.postTypeChoice.deleteMany({ where: { postId } });
@@ -115,7 +123,6 @@ export class PostService {
             where: { slug: toSlug(tag.name) },
             create: { slug: toSlug(tag.name), name: tag.name },
         }));
-
 
         // Create the postBody 
         const postTypeChoiceCreate = postBody.map(body => ({
@@ -147,33 +154,23 @@ export class PostService {
 
         return updatedPost;
     }
-    // I list the method we will probably need
- 
-    // async findPostByUser(params: PostProps): Promise<PostProps[]> {
-    //     // Maybe this method wont be necessary, the findAll with params should be enough?
-    //     const { userId } = params;
-    //     return this.prisma.post.findMany({
-    //         where: {
-    //             userId: userId
-    //         },
-    //         include: {
-    //             user: true,
-    //             comments: true,
-    //             // tags: {
-    //             //     include: {
-    //             //         post: true,
-    //             //         tag: true
-    //             //     }
-    //             // },
-    //             postTypeChoice: {
-    //                 include: {
-    //                     content: true
-    //                 }
-    //             },
-    //             likes: true
-    //         }
-    //     }); 
-    // }
 
-
+    async findByUser(id: number) {
+        return this.prisma.post.findMany({
+            where: {
+                userId: id
+            },
+            include: {
+                user: true,
+                comments: true,
+                tags: true,
+                postTypeChoice: {
+                    include: {
+                        content: true
+                    }
+                },
+                likes: true
+            }
+        }); 
+    }
 }

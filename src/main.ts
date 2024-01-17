@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +20,9 @@ async function bootstrap() {
       whitelist: true, // Insure to protect from unwanted data
     }),
   );
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true});
+
   app.setGlobalPrefix('api/v1');
   await app.listen(4000);
 }
