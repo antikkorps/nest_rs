@@ -3,10 +3,10 @@ Les commentaires doivent acceuillir des réponses et des réactions.
 
 
 
-
-Dans postTypeCHoice et Post, il y a des array, est ce utile ?
-
 Revoir likedItemId dans post
 
 
 Supprimer MediaPost?
+
+
+Créer un class validator pour les uniques

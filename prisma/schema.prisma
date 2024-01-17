@@ -100,7 +100,7 @@ model PostTypeChoice {
 
 model PostContent {
   id         Int            @id @default(autoincrement())
-  postType   PostTypeChoice @relation("postTypeContent", fields: [postTypeId], references: [id])
+  postType   PostTypeChoice @relation("postTypeContent", fields: [postTypeId], references: [id],  onDelete: Cascade)
   postTypeId Int
   content    String
 
@@ -133,7 +133,7 @@ model SavedPost {
 
 model PostTag {
   postId Int
-  post   Post @relation("postTags", fields: [postId], references: [id])
+  post   Post @relation("postTags", fields: [postId], references: [id], onDelete: Cascade)
 
   tagSlug String
   tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
