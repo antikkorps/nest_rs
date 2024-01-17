@@ -27,8 +27,8 @@ Je te laisse un modèle de create et un modèle de update pour que tu teste :
   ],
   "userId": 1,
   "tags": [
-    { "name": "@lol" },
-    { "name": "@lolqdsqsdqdqsd" }
+    { "name": "#lol" },
+    { "name": "#lolqdsqsdqdqsd" }
   ]
 }
 
@@ -49,7 +49,7 @@ Je te laisse un modèle de create et un modèle de update pour que tu teste :
   ],
   "userId": 1,
   "tags": [
-    { "name": "@lolUPDATED" },
-    { "name": "@lolqdsqsdqdqsdUPDATED" }
+    { "name": "#lolUPDATED" },
+    { "name": "#lolqdsqsdqdqsdUPDATED" }
   ]
 }

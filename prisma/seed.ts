@@ -71,6 +71,22 @@ async function main() {
       },
     },
   });
+  await prisma.user.create({
+    data: {
+      firstName: 'guest',
+      lastName: 'guest',
+      email: 'guest@admin.com',
+      password: await argon2.hash(process.env.ADMIN_PASSWORD),
+      roles: {
+        create: [
+          {
+            assignedBy: 'Default',
+            roleSlug: "guest", // roleId 1 === Super Admin
+          }
+        ]
+      },
+    },
+  });
 
   for (let i = 0; i < fakerRounds; i++) {
     // await prisma.user.create({ data: fakerUser() });
