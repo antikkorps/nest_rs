@@ -1,5 +1,7 @@
 import { PostType } from "@prisma/client";
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min, ValidateNested } from "class-validator";
+import { Type } from "class-transformer"
+import { CreateTagDto } from "src/tag/dto/CreateTag.dto";
 
 export class CreatePostDto {
     @IsString()
@@ -13,6 +15,7 @@ export class CreatePostDto {
 
     @IsInt()
     @IsPositive()
+    @IsOptional()
     @Min(0)
     views: number;
 
@@ -20,13 +23,40 @@ export class CreatePostDto {
 
     @IsInt()
     @IsPositive()
+    @IsOptional()
     @Min(0)
     shared: number
 
 
-    // Link it to the postTypeDto?
+
+    @IsArray()
+    @ValidateNested()
+    @Type(() => CreateTagDto)
+    tags: CreateTagDto[]
+
+    @IsArray()
+    @ValidateNested()
+    @Type(() => postBodyDto)
+    postBody: postBodyDto[]
 }
 
+class postBodyDto {
+
+    @IsEnum(PostType)
+    @Type(() => String)
+    postTypeChoice: PostType;
+
+    @IsArray()
+    @ValidateNested()
+    @Type(() => postContentDto)
+    postContent: postContentDto[]
+
+}
+
+class postContentDto {
+    @IsString()
+    content: string;
+}
 // I dont know how to validate the post content and postType so I create a separate class
 export class CreatePostTypeChoiceDto {
     @IsInt()
@@ -48,5 +78,4 @@ export class CreatePostContentDto {
     @IsNotEmpty()
     content: string
 }
-
 
