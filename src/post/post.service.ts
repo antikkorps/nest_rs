@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { PostProps } from "types/all";
+import { AuthUserProps, PostProps } from "types/all";
 import { CreatePostDto } from "./dto/CreatePost.dto";
 import { toSlug } from "helpers/transformToSlug";
 import { UpdatePostDto } from "./dto/UpdatePost.dto";
@@ -60,8 +60,8 @@ export class PostService {
         
         // Create or connect the tags to the actual post.
         const tagsConnectOrCreate = tags.map(tag => ({
-            where: { slug: toSlug(tag.name) },
-            create: { slug: toSlug(tag.name), name: tag.name },
+            where: { name: tag.name },
+            create: { name: tag.name },
         }));
 
         // Here we create all the post content from the postBody entry.
@@ -78,7 +78,6 @@ export class PostService {
         return this.prisma.post.create({
           data: {
             description,
-            likedItemId: 1,
             user: {
                 connect: { id: userId } 
             },
@@ -97,9 +96,8 @@ export class PostService {
         });
     }
 
-    async editPost(postId: number, updatePostDto: UpdatePostDto, user) {
+    async editPost(postId: number, updatePostDto: UpdatePostDto, user: AuthUserProps) {
         const { description, userId, tags, postBody } = updatePostDto;
-
         const postToUpdate = await this.prisma.post.findUnique({
             where: { id: postId }
         });
@@ -120,8 +118,8 @@ export class PostService {
 
         // Start to createOrconnect the new tags
         const tagsConnectOrCreate = tags.map(tag => ({
-            where: { slug: toSlug(tag.name) },
-            create: { slug: toSlug(tag.name), name: tag.name },
+            where: { name: tag.name },
+            create: { name: tag.name },
         }));
 
         // Create the postBody 

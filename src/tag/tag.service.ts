@@ -12,36 +12,30 @@ export class TagService {
         return this.prisma.tag.findMany(); 
     }
 
-    async findOne(slug: string) {
+    async findOne(name: string) {
         return this.prisma.tag.findUnique({
-          where: { slug },
+          where: { name },
         });
     }
 
     async create(createTagDto: CreateTagDto) {
-      const slug = toSlug(createTagDto.name)
       return this.prisma.tag.create({
           data: {
             name: createTagDto.name,
-            slug: slug
           },
         });
     }
 
-    async remove(slug: string) {
+    async remove(name: string) {
         return this.prisma.tag.delete({
-          where: { slug },
+          where: { name },
         });
     }
     
     async editTag(tagId: number, updateTagDto: UpdateTagDto) {
-        const slug = toSlug(updateTagDto.name)
         const tag = await this.prisma.tag.update({
           where: { id: tagId },
-          data: {
-              ...updateTagDto,
-              slug: slug,
-          },
+          data: {...updateTagDto},
         });
         return tag;
       }

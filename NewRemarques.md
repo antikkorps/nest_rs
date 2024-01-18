@@ -26,11 +26,10 @@ L'option pinned tu l'as au moment de la création du post / à l'update. Mais il
 
 
 
-## Revoir likedItemId dans post
-
+## likedItemId supprimé
+Prochaine PR supprimer tag slug. Adapté pour la relation -> OK
+Dans le getUser il n'y a plus que roles et id du user.
 
 ## Supprimer MediaPost? I think yes, PostTypeChoice->PostContent replace it right?
-
-
 
 

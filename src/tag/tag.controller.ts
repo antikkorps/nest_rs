@@ -15,9 +15,9 @@ export class TagController {
     }
 
     @UseGuards(jwtGuard)
-    @Get(':slug')
-    findOne(@Param('slug') slug: string) {
-      return this.tagService.findOne(slug);
+    @Get(':name')
+    findOne(@Param('name') name: string) {
+      return this.tagService.findOne(name);
     }
 
     @UseGuards(jwtGuard)
@@ -34,8 +34,8 @@ export class TagController {
     }
 
     @UseGuards(jwtGuard)
-    @Delete(':slug')
-    remove(@Param('slug') slug: string) {
-      return this.tagService.remove(slug);
+    @Delete(':name')
+    remove(@Param('name') name: string) {
+      return this.tagService.remove(name);
     }
 }
