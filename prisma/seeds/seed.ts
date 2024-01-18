@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import * as argon2 from 'argon2';
-import { roleSeeder } from './seeds/roleSeeder';
+import { roleSeeder } from './roleSeeder';
 
 // In order to create seeds, use "npm run seed"
 
