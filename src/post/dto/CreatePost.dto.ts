@@ -1,5 +1,6 @@
 import { PostType } from "@prisma/client";
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min, ValidateNested } from "class-validator";
+import { Type } from "class-transformer"
 
 export class CreatePostDto {
     @IsString()
@@ -10,43 +11,49 @@ export class CreatePostDto {
     @IsNotEmpty()
     userId: number;
 
-
     @IsInt()
     @IsPositive()
+    @IsOptional()
     @Min(0)
     views: number;
 
-
-
     @IsInt()
     @IsPositive()
+    @IsOptional()
     @Min(0)
     shared: number
 
+    @IsArray()
+    @ValidateNested()
+    @Type(() => CreateTagFromPostDto)
+    tags: CreateTagFromPostDto[]
 
-    // Link it to the postTypeDto?
+    @IsArray()
+    @ValidateNested()
+    @Type(() => postBodyDto)
+    postBody: postBodyDto[]
 }
 
-// I dont know how to validate the post content and postType so I create a separate class
-export class CreatePostTypeChoiceDto {
-    @IsInt()
-    @IsNotEmpty()
-    postId: number
+class CreateTagFromPostDto {
+    @IsString()
+    name: string;
+}
+class postBodyDto {
 
     @IsEnum(PostType)
-    type: PostType
+    @Type(() => String)
+    postTypeChoice: PostType;
 
-    // Link it to the post ContentDto?
+    @IsArray()
+    @ValidateNested()
+    @Type(() => postContentDto)
+    postContent: postContentDto[]
+
 }
 
-export class CreatePostContentDto {
-    @IsInt()
-    @IsNotEmpty()
-    postTypeId: number
-
+class postContentDto {
     @IsString()
-    @IsNotEmpty()
-    content: string
+    content: string;
 }
 
 

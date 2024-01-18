@@ -57,22 +57,24 @@ model User {
 
 // Everything related to posts, comments && likes
 model Post {
-  id             Int         @id @default(autoincrement())
-  description    String?
-  userId         Int
-  user           User        @relation("posts", fields: [userId], references: [id])
-  mediaPosts     MediaPost[] @relation("mediaPost")
+  id          Int     @id @default(autoincrement())
+  description String?
+  views       BigInt?
+  shared      BigInt?
+  userId      Int
+  user User @relation("posts", fields: [userId], references: [id])
+  tags           PostTag[]   @relation("postTags")
+  // Maybe we can delete mediaPost
+  mediaPosts MediaPost[] @relation("mediaPost")
+
   likes          Like[]      @relation("postLikes")
   likedItemId    Int
   comments       Comment[]   @relation("postComments")
   userSavedPosts SavedPost[] @relation("userSavedPosts")
-  tags           PostTag[]   @relation("postTags")
+ 
 
   // Add for the post Content by Karl 12/01
   postTypeChoice PostTypeChoice[] @relation("postType")
-
-  views  BigInt?
-  shared BigInt?
 
   @@index([userId, id], name: "main_post_index")
   @@map("posts")
@@ -98,7 +100,7 @@ model PostTypeChoice {
 
 model PostContent {
   id         Int            @id @default(autoincrement())
-  postType   PostTypeChoice @relation("postTypeContent", fields: [postTypeId], references: [id])
+  postType   PostTypeChoice @relation("postTypeContent", fields: [postTypeId], references: [id],  onDelete: Cascade)
   postTypeId Int
   content    String
 
@@ -130,15 +132,14 @@ model SavedPost {
 }
 
 model PostTag {
-  id Int @id @default(autoincrement())
-
   postId Int
-  post   Post @relation("postTags", fields: [postId], references: [id])
+  post   Post @relation("postTags", fields: [postId], references: [id], onDelete: Cascade)
 
   tagSlug String
   tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
 
-  @@unique([postId, tagSlug])
+  @@id([postId, tagSlug])
+  // @@unique([postId, tagSlug])
   @@map("postsTags")
 }
 
@@ -415,6 +416,9 @@ model Follow {
 
   followedId Int
   followed   User @relation("followedId", fields: [followedId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([followerId, followedId])
   @@map("follows")

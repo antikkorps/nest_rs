@@ -11,6 +11,11 @@ import { SalonModule } from './salon/salon.module';
 // import { ImageService } from './image/image.service';
 // import { ImageModule } from './image/image.module';
 import { RoleModule } from './role/role.module';
+import { TagModule } from './tag/tag.module';
+import { PostService } from './post/post.service';
+import { PostController } from './post/post.controller';
+import { PostModule } from './post/post.module';
+import { IsUniqueConstraint } from 'custom_validator/isUnique/is-unique-constraint';
 
 @Module({
   imports: [
@@ -24,13 +29,18 @@ import { RoleModule } from './role/role.module';
     SalonModule,
     // ImageModule,
     RoleModule,
+    TagModule,
+    PostModule,
   ],
   controllers: [
     AppController,
+    PostController,
     // ImageController
   ],
   providers: [
     AppService,
+    PostService,
+    IsUniqueConstraint
     // ImageService
   ],
 })
