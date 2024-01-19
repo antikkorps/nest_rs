@@ -68,7 +68,6 @@ model Post {
   mediaPosts MediaPost[] @relation("mediaPost")
 
   likes          Like[]      @relation("postLikes")
-  likedItemId    Int
   comments       Comment[]   @relation("postComments")
   userSavedPosts SavedPost[] @relation("userSavedPosts")
  
@@ -135,10 +134,10 @@ model PostTag {
   postId Int
   post   Post @relation("postTags", fields: [postId], references: [id], onDelete: Cascade)
 
-  tagSlug String
-  tag     Tag    @relation("tagSlug", fields: [tagSlug], references: [slug])
+  tagName String
+  tag     Tag    @relation("tagName", fields: [tagName], references: [name])
 
-  @@id([postId, tagSlug])
+  @@id([postId, tagName])
   // @@unique([postId, tagSlug])
   @@map("postsTags")
 }
@@ -157,9 +156,7 @@ model Comment {
 model Tag {
   id   Int    @id @default(autoincrement())
   name String @unique
-  slug String @unique
-
-  posts PostTag[] @relation("tagSlug")
+  posts PostTag[] @relation("tagName")
 
   @@map("tags")
 }
