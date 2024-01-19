@@ -51,9 +51,9 @@ export class PostController {
 
   @UseGuards(jwtGuard)
   @Delete(':id')
-  remove(@Param('id') postId: string) {
+  remove(@Param('id') postId: string, @User() user: AuthUserProps) {
     const id = parseInt(postId, 10);
-    return this.postService.remove(+id);
+    return this.postService.remove(+id, user);
   }
 
   @UseGuards(jwtGuard)

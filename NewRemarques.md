@@ -33,3 +33,6 @@ Dans le getUser il n'y a plus que roles et id du user.
 ## Supprimer MediaPost? I think yes, PostTypeChoice->PostContent replace it right?
 
 
+
+Sur les update et delete de salon. Vérifier is user/admin.
+Sur le salon : ajouter un système de recherche par nom / zipcode / country etc.

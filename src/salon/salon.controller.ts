@@ -4,14 +4,14 @@ import { SalonService } from './salon.service';
 import { VerifyRoles, jwtGuard } from 'src/auth/guard';
 import { CreateSalonDto } from './dto/CreateSalon.dto';
 import { UpdateSalonDto } from './dto/UpdateSalon.dto';
+import { AuthUserProps } from 'types/all';
+import { User } from 'helpers/getUser';
 @Controller('salon')
 export class SalonController {
     constructor(public salonService: SalonService) {}
 
 
-    // JWTGuard??
-    @UseGuards(jwtGuard, new VerifyRoles('guest'))
-    // @UseGuards(VerifyRoles)
+    @UseGuards(jwtGuard, new VerifyRoles('super_admin'))
     @Get()
     getSalons() {
         return this.salonService.findAll();
@@ -32,20 +32,18 @@ export class SalonController {
     }
 
     // Patch
-    // Add an user verification here to know if he's the owner
     @UseGuards(jwtGuard)
     @Patch(':id')
-    editSalon(@Param('id') salonId: string, @Body() updateSalonDto: UpdateSalonDto) {
+    editSalon(@Param('id') salonId: string, @Body() updateSalonDto: UpdateSalonDto, @User() user: AuthUserProps) {
       const id = parseInt(salonId, 10);
-      return this.salonService.editSalon(id, updateSalonDto);
+      return this.salonService.editSalon(id, updateSalonDto, user);
     }
 
     // Delete
-       // Add an user verification here to know if he's the owner
     @UseGuards(jwtGuard)
     @Delete(':id')
-    remove(@Param('id') id: string) {
-      return this.salonService.remove(+id);
+    remove(@Param('id') id: string, @User() user: AuthUserProps) {
+      return this.salonService.remove(+id, user);
     }
     // Delete many ?
 }
