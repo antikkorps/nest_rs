@@ -87,16 +87,16 @@ enum PostType {
   SHAREDPROFILE
   SHAREDMEDIA
 }
-enum ModoStatus {
-  PENDING
-  APPROUVED
-  DISAPPROUVED
-}
-enum UserStatus {
-  ARCHIVED
-  ACTIVE
-  INACTIVE
-}
+// enum ModoStatus {
+//   PENDING
+//   APPROUVED
+//   DISAPPROUVED
+// }
+// enum UserStatus {
+//   ARCHIVED
+//   ACTIVE
+//   INACTIVE
+// }
 
 model PostTypeChoice {
   id      Int           @id @default(autoincrement())
