@@ -62,4 +62,11 @@ export class PostController {
     const id = parseInt(postId, 10);
     return this.postService.findByUser(+id);
   }
+
+
+  @Patch('/views/:id')
+  increaseView(@Param('id') postId: string) {
+    const id = parseInt(postId, 10);
+    return this.postService.increaseView(+id);
+  }
 }
