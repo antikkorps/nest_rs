@@ -15,11 +15,10 @@ export class VerifyRoles extends AuthGuard('jwt') implements CanActivate {
 
     if (request?.user) {
       const user = request.user;
-      // console.log(user)
-      const hasRole = user.roles.some(
-        (role: UserRoleProps) => role.roleSlug === this.targetRole,
-      );
 
+      console.log(user)
+      const hasRole = user.roles.some((role: UserRoleProps) => role.roleSlug === this.targetRole);
+      
       if (!hasRole) {
         console.log(`User does not have the required role: ${this.targetRole}`);
         return false;

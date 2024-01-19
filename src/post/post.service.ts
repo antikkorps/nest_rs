@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PostProps } from 'types/all';
+import { AuthUserProps, PostProps } from 'types/all';
 import { CreatePostDto } from './dto/CreatePost.dto';
 import { toSlug } from 'helpers/transformToSlug';
 import { UpdatePostDto } from './dto/UpdatePost.dto';
@@ -27,72 +27,103 @@ export class PostService {
         tags: true,
         postTypeChoice: {
           include: {
-            content: true,
+            user: true,
+            comments: true,
+            tags: true,
+            postTypeChoice: {
+                include: {
+                    content: true
+                }
+            },
+            likes: true
+        }
+        });
+    }
+
+    async remove(id: number) {
+
+        await this.prisma.postTag.deleteMany({ where: { postId: id } });
+        await this.prisma.postTypeChoice.deleteMany({ where: { postId: id } });
+
+        return this.prisma.post.delete({
+          where: { id },
+        });
+    }
+
+    async create(createPostDto: CreatePostDto) {
+        const { description, userId, tags, postBody } = createPostDto;
+        
+        // Create or connect the tags to the actual post.
+        const tagsConnectOrCreate = tags.map(tag => ({
+            where: { name: tag.name },
+            create: { name: tag.name },
+        }));
+
+        // Here we create all the post content from the postBody entry.
+        // It's an array of some data.
+        const postTypeChoiceCreate = postBody.map(body => ({
+            type: body.postTypeChoice,
+            content: {
+              create: body.postContent.map(content => ({
+                content: content.content,
+              })),
+            },
+          }));
+
+        return this.prisma.post.create({
+          data: {
+            description,
+            user: {
+                connect: { id: userId } 
+            },
+
+            tags: {
+                create: tagsConnectOrCreate.map(tag => ({
+                    tag: {
+                        connectOrCreate: tag,
+                    },
+                })),
+            },
+            postTypeChoice: {
+                create: postTypeChoiceCreate,
+            },
           },
-        },
-        likes: true,
-      },
-    });
-  }
+        });
+    }
 
-  async findOne(id: number) {
-    return this.prisma.post.findUnique({
-      where: { id },
-      include: {
-        user: true,
-        comments: true,
-        tags: true,
-        postTypeChoice: {
-          include: {
-            content: true,
-          },
-        },
-        likes: true,
-      },
-    });
-  }
+    async editPost(postId: number, updatePostDto: UpdatePostDto, user: AuthUserProps) {
+        const { description, userId, tags, postBody } = updatePostDto;
+        const postToUpdate = await this.prisma.post.findUnique({
+            where: { id: postId }
+        });
 
-  async remove(id: number) {
-    await this.prisma.postTag.deleteMany({ where: { postId: id } });
-    await this.prisma.postTypeChoice.deleteMany({ where: { postId: id } });
+        if(!postToUpdate) throw new NotFoundException('Post not found');
+        
+        // Check if the User can do this action
+        const isAuthorizeToUpdate = await isOwnerOrSuperAdmin({
+            ownerId: postToUpdate.userId,
+            user: user
+        }); 
+        if(!isAuthorizeToUpdate) throw new ForbiddenException("You don't have permission to edit this post.");
+        
+        
+        // I think we must delete the pivot entry and replace by the new, even they're the same
+        await this.prisma.postTag.deleteMany({ where: { postId } });
+        await this.prisma.postTypeChoice.deleteMany({ where: { postId } });
 
-    return this.prisma.post.delete({
-      where: { id },
-    });
-  }
+        // Start to createOrconnect the new tags
+        const tagsConnectOrCreate = tags.map(tag => ({
+            where: { name: tag.name },
+            create: { name: tag.name },
+        }));
 
-  async create(createPostDto: CreatePostDto) {
-    const { description, userId, tags, postBody } = createPostDto;
-
-    // Create or connect the tags to the actual post.
-    const tagsConnectOrCreate = tags.map((tag) => ({
-      where: { slug: toSlug(tag.name) },
-      create: { slug: toSlug(tag.name), name: tag.name },
-    }));
-
-    // Here we create all the post content from the postBody entry.
-    // It's an array of some data.
-    const postTypeChoiceCreate = postBody.map((body) => ({
-      type: body.postTypeChoice,
-      content: {
-        create: body.postContent.map((content) => ({
-          content: content.content,
-        })),
-      },
-    }));
-
-    return this.prisma.post.create({
-      data: {
-        description,
-        likedItemId: 1,
-        user: {
-          connect: { id: userId },
-        },
-
-        tags: {
-          create: tagsConnectOrCreate.map((tag) => ({
-            tag: {
-              connectOrCreate: tag,
+        // Create the postBody 
+        const postTypeChoiceCreate = postBody.map(body => ({
+            type: body.postTypeChoice,
+            content: {
+                create: body.postContent.map(content => ({
+                    content: content.content,
+                })),
             },
           })),
         },
