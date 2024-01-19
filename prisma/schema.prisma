@@ -134,10 +134,10 @@ model PostTag {
   postId Int
   post   Post @relation("postTags", fields: [postId], references: [id], onDelete: Cascade)
 
-  tagName String
-  tag     Tag    @relation("tagName", fields: [tagName], references: [name])
+  tagName String?
+  tag     Tag?    @relation("tagName", fields: [tagName], references: [name])
 
-  @@id([postId, tagName])
+  @@id([postId])
   // @@unique([postId, tagSlug])
   @@map("postsTags")
 }
