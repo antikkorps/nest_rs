@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import * as argon2 from 'argon2';
-import { roleSeeder } from './seeds/roleSeeder';
+import { roleSeeder } from './roleSeeder';
 
 // In order to create seeds, use "npm run seed"
 
@@ -25,10 +25,10 @@ const prisma = new PrismaClient();
 
 const fakerSalon = (): any => ({
   name: faker.company.name(),
-  logo: faker.image.imageUrl(),
-  street: faker.address.streetAddress(),
-  zipcode: faker.address.zipCode(),
-  country: faker.address.country(),
+  logo: faker.image.urlLoremFlickr({ category: 'business' }),
+  street: faker.location.streetAddress(),
+  zipcode: faker.location.zipCode(),
+  country: faker.location.country(),
   userId: 1, // Associé à l'id de l'utilisateur 1
 });
 
@@ -38,10 +38,7 @@ async function main() {
   console.log('Seeding...');
   // /// --------- Users && Annonces && Contacts --------------- ///
 
-
-
-
- // /// --------- ROLES --------------- ///
+  // /// --------- ROLES --------------- ///
   for (const role of roleSeeder) {
     await prisma.role.create({
       data: {
@@ -61,13 +58,13 @@ async function main() {
         create: [
           {
             assignedBy: 'Default',
-            roleSlug: "super_admin", // roleId 1 === Super Admin
+            roleSlug: 'super_admin', // roleId 1 === Super Admin
           },
           {
             assignedBy: 'Default',
-            roleSlug: "admin", // roleId 1 === Admin
+            roleSlug: 'admin', // roleId 1 === Admin
           },
-        ]
+        ],
       },
     },
   });
@@ -81,9 +78,9 @@ async function main() {
         create: [
           {
             assignedBy: 'Default',
-            roleSlug: "guest", // roleId 1 === Super Admin
-          }
-        ]
+            roleSlug: 'guest', // roleId 1 === Super Admin
+          },
+        ],
       },
     },
   });
@@ -93,9 +90,7 @@ async function main() {
     // await prisma.contact.create({ data: fakerContact() });
     await prisma.salon.create({ data: fakerSalon() });
   }
-  
 
-  
   console.log('Seeding done !');
 }
 
