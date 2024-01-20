@@ -254,4 +254,44 @@ export class PostService {
       }
  
     }
+
+    async addPinnedPost(id: number, user: AuthUserProps) {
+      // I added the where userId verification, then the isAuthorizeToPinned is not 100% usefull I think cause the 404 will be triggered before the authorization...
+      // But for now I maybe let a failure, so more security is better
+      const post = await this.prisma.post.findUnique({
+        where: { id: id, userId: user.id },
+      })
+      if(post) {
+        const isAuthorizeToPinned = await isOwnerOrSuperAdmin({
+          ownerId: post.userId,
+            user: user
+        }); 
+        if(!isAuthorizeToPinned) throw new ForbiddenException("You don't have permission to edit this post.");
+        
+
+        const existingPinnedPost = await this.prisma.pinnedPost.findFirst({
+          where: {
+            userId: user.id,
+            postId: id,
+          },
+        });
+
+        if(existingPinnedPost) {
+          return await this.prisma.pinnedPost.delete({
+            where: {
+              id: existingPinnedPost.id,
+            },
+          });
+        } else {
+          return  await this.prisma.pinnedPost.create({
+            data: {
+              userId: user.id,
+              postId: id,
+            },
+          });
+        }
+      } else {
+        throw new NotFoundException('Post not found');
+      }   
+    }
 }

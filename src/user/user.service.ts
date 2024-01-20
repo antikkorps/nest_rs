@@ -16,7 +16,8 @@ export class UserService {
   async getAllUsers() {
     const users = await this.prisma.user.findMany({
       include: {
-        roles: true
+        roles: true,
+        pinned_post: true
       },
     });
   

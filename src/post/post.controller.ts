@@ -70,15 +70,24 @@ export class PostController {
     return this.postService.increaseView(+id);
   }
 
+  @UseGuards(jwtGuard)
   @Patch('/shared/:id')
   increaseSharing(@Param('id') postId: string) {
     const id = parseInt(postId, 10);
     return this.postService.increaseSharing(+id);
   }
 
+  @UseGuards(jwtGuard)
   @Patch('/repost/:id')
   increaseRepost(@Param('id') postId: string) {
     const id = parseInt(postId, 10);
     return this.postService.increaseRepost(+id);
+  }
+
+  @UseGuards(jwtGuard)
+  @Patch('/pinned/:id')
+  addPinnedPost(@Param('id') postId: string, @User() user: AuthUserProps) {
+    const id = parseInt(postId, 10);
+    return this.postService.addPinnedPost(+id, user);
   }
 }
