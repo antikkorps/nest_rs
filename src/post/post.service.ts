@@ -14,21 +14,22 @@ export class PostService {
   constructor(public prisma: PrismaService) {}
 
   // In this method we will use the params : pagination, search (user, tag), orbderBy (view, share, likes, comments)
-  async findAll() {
-    return this.prisma.post.findMany({
+    async findAll() {
+      return this.prisma.post.findMany({
         include: {
-            user: true,
-            comments: true,
-            tags: true,
-            postTypeChoice: {
-                include: {
-                    content: true
-                }
-            },
-            likes: true
-        }
-    }); 
-}
+              user: true,
+              comments: true,
+              tags: true,
+              postTypeChoice: {
+                  include: {
+                      content: true
+                  }
+              },
+              likes: true
+          }
+      }); 
+    }
+
     async findOne(id: number) {
       const post = await this.prisma.post.findUnique({
         where: { id },

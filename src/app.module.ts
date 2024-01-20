@@ -16,6 +16,9 @@ import { PostService } from './post/post.service';
 import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
 import { IsUniqueConstraint } from 'custom_validator/isUnique/is-unique-constraint';
+import { LikeController } from './like/like.controller';
+import { LikeService } from './like/like.service';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -31,16 +34,19 @@ import { IsUniqueConstraint } from 'custom_validator/isUnique/is-unique-constrai
     RoleModule,
     TagModule,
     PostModule,
+    LikeModule,
   ],
   controllers: [
     AppController,
     PostController,
+    LikeController,
     // ImageController
   ],
   providers: [
     AppService,
     PostService,
-    IsUniqueConstraint
+    IsUniqueConstraint,
+    LikeService
     // ImageService
   ],
 })

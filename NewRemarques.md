@@ -34,5 +34,6 @@ Dans le getUser il n'y a plus que roles et id du user.
 
 
 
-Sur les update et delete de salon. Vérifier is user/admin.
+Créer la route d'ajout/suppression de like sur post : /api/v1/post/like
+Route d'incrémentation de view / share / repost
 Sur le salon : ajouter un système de recherche par nom / zipcode / country etc.
