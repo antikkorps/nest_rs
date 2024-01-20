@@ -73,7 +73,6 @@ export class PostService {
 
     async create(createPostDto: CreatePostDto) {
         const { description, userId, tags, postBody } = createPostDto;
-        
         // Create or connect the tags to the actual post.
         const tagsConnectOrCreate = tags.map(tag => ({
             where: { name: tag.name },
@@ -193,5 +192,66 @@ export class PostService {
       if(posts.length === 0) throw new NotFoundException('No posts found');
 
       return posts;
+    }
+
+    async increaseView(id: number) {
+  
+      const post = await this.prisma.post.findUnique({
+          where: { id }
+      });
+      // return post.views +  BigInt(1);
+      if(post) {
+        const currentViews = post.views || 0;
+        const newViews = Number(currentViews) + 1;
+        return await this.prisma.post.update({
+          where: { id },
+          data: {
+            views: newViews.toString(),
+          }
+        })
+      } else {
+        throw new NotFoundException('Post not found');
+      }
+ 
+    }
+
+    async increaseSharing(id: number) {
+  
+      const post = await this.prisma.post.findUnique({
+          where: { id }
+      });
+      if(post) {
+        const currentSharing = post.shared || 0;
+        const newSharing = Number(currentSharing) + 1;
+        return await this.prisma.post.update({
+          where: { id },
+          data: {
+            shared: newSharing.toString(),
+          }
+        })
+      } else {
+        throw new NotFoundException('Post not found');
+      }
+ 
+    }
+
+    async increaseRepost(id: number) {
+  
+      const post = await this.prisma.post.findUnique({
+          where: { id }
+      });
+      if(post) {
+        const currentRepost = post.repost || 0;
+        const newRepost = Number(currentRepost) + 1;
+        return await this.prisma.post.update({
+          where: { id },
+          data: {
+            repost: newRepost.toString(),
+          }
+        })
+      } else {
+        throw new NotFoundException('Post not found');
+      }
+ 
     }
 }

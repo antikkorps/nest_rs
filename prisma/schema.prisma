@@ -60,8 +60,9 @@ model User {
 model Post {
   id          Int         @id @default(autoincrement())
   description String?
-  views       BigInt?
-  shared      BigInt?
+  views       String?
+  shared      String?
+  repost      String?
   userId      Int
   user        User        @relation("posts", fields: [userId], references: [id])
   tags        PostTag[]   @relation("postTags")
@@ -87,6 +88,7 @@ enum PostType {
   SHAREDPROFILE
   SHAREDMEDIA
 }
+
 // enum ModoStatus {
 //   PENDING
 //   APPROUVED
@@ -118,9 +120,9 @@ model PostContent {
 }
 
 model PinnedPost {
-  id Int @id @default(autoincrement())
-  postId Int
-  userId Int
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -153,14 +155,15 @@ model SavedPost {
 }
 
 model PostTag {
+  id     Int  @id @default(autoincrement())
   postId Int
   post   Post @relation("postTags", fields: [postId], references: [id], onDelete: Cascade)
 
   tagName String?
   tag     Tag?    @relation("tagName", fields: [tagName], references: [name])
 
-  @@id([postId])
-  // @@unique([postId, tagSlug])
+  // @@id([postId])
+  // @@unique([postId, tagName])
   @@map("postsTags")
 }
 

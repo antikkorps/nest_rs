@@ -56,4 +56,7 @@ class postContentDto {
     content: string;
 }
 
-
+export class IncreaseViewPostDto {
+    @IsNumber()
+    view: number;
+}
