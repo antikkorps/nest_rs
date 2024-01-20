@@ -26,13 +26,16 @@ L'option pinned tu l'as au moment de la création du post / à l'update. Mais il
 
 
 
-## likedItemId supprimé
-Prochaine PR supprimer tag slug. Adapté pour la relation -> OK
-Dans le getUser il n'y a plus que roles et id du user.
 
 ## Supprimer MediaPost? I think yes, PostTypeChoice->PostContent replace it right?
 
 
 
-Sur les update et delete de salon. Vérifier is user/admin.
+
+
+Route d'incrémentation de view / share / repost
 Sur le salon : ajouter un système de recherche par nom / zipcode / country etc.
+Penser au fonctionnement d'un tag sur un mec. Il faut qu'il recoive une notif de ce tag. Un slug pour le nom et le salon? Pour taguer il faut rechercher.
+
+
+## Repost et shared method OK.
