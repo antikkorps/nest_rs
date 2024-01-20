@@ -65,7 +65,7 @@ export class PostService {
       
       await this.prisma.postTag.deleteMany({ where: { postId: id } });
       await this.prisma.postTypeChoice.deleteMany({ where: { postId: id } });
-
+      await this.prisma.pinnedPost.deleteMany({where: { postId: id} });
       return this.prisma.post.delete({
         where: { id },
       });
@@ -268,20 +268,20 @@ export class PostService {
         }); 
         if(!isAuthorizeToPinned) throw new ForbiddenException("You don't have permission to edit this post.");
         
-
+        // We need to check if post is actually pinned.
         const existingPinnedPost = await this.prisma.pinnedPost.findFirst({
           where: {
             userId: user.id,
             postId: id,
           },
         });
-
         if(existingPinnedPost) {
-          return await this.prisma.pinnedPost.delete({
-            where: {
-              id: existingPinnedPost.id,
-            },
-          });
+          return await this.prisma.pinnedPost.update({
+            where: { id: existingPinnedPost.id},
+            data: {
+              deletedAt: existingPinnedPost.deletedAt === null ? new Date() : null
+            }
+          })
         } else {
           return  await this.prisma.pinnedPost.create({
             data: {

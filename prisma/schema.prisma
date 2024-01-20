@@ -125,7 +125,8 @@ model PinnedPost {
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  deletedAt DateTime?
+  
   user User @relation("userPinnedPost", fields: [userId], references: [id])
   post Post @relation("pinnedPost", fields: [postId], references: [id])
 }
