@@ -214,4 +214,44 @@ export class PostService {
       }
  
     }
+
+    async increaseSharing(id: number) {
+  
+      const post = await this.prisma.post.findUnique({
+          where: { id }
+      });
+      if(post) {
+        const currentSharing = post.shared || 0;
+        const newSharing = Number(currentSharing) + 1;
+        return await this.prisma.post.update({
+          where: { id },
+          data: {
+            shared: newSharing.toString(),
+          }
+        })
+      } else {
+        throw new NotFoundException('Post not found');
+      }
+ 
+    }
+
+    async increaseRepost(id: number) {
+  
+      const post = await this.prisma.post.findUnique({
+          where: { id }
+      });
+      if(post) {
+        const currentRepost = post.repost || 0;
+        const newRepost = Number(currentRepost) + 1;
+        return await this.prisma.post.update({
+          where: { id },
+          data: {
+            repost: newRepost.toString(),
+          }
+        })
+      } else {
+        throw new NotFoundException('Post not found');
+      }
+ 
+    }
 }

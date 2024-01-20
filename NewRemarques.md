@@ -26,9 +26,6 @@ L'option pinned tu l'as au moment de la création du post / à l'update. Mais il
 
 
 
-## likedItemId supprimé
-Prochaine PR supprimer tag slug. Adapté pour la relation -> OK
-Dans le getUser il n'y a plus que roles et id du user.
 
 ## Supprimer MediaPost? I think yes, PostTypeChoice->PostContent replace it right?
 
@@ -38,8 +35,7 @@ Dans le getUser il n'y a plus que roles et id du user.
 
 Route d'incrémentation de view / share / repost
 Sur le salon : ajouter un système de recherche par nom / zipcode / country etc.
-Penser au fonctionnement d'un tag sur un mec. Il faut qu'il recoive une notif de ce tag.
+Penser au fonctionnement d'un tag sur un mec. Il faut qu'il recoive une notif de ce tag. Un slug pour le nom et le salon? Pour taguer il faut rechercher.
 
 
-## Dans postTag j'ai du ajouter un id. Car l'id // @@id([postId]) ne fonctionnait visiblement pas...A revoir.
-## View est devenue une string, car le big int je n'arrivais pas à le gérer pour les calculs et enregistrement en db. En string ça me semble plus simple. Il faudra faire surement pareil pour les shared et le repost.
+## Repost et shared method OK.

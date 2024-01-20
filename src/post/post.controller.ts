@@ -69,4 +69,16 @@ export class PostController {
     const id = parseInt(postId, 10);
     return this.postService.increaseView(+id);
   }
+
+  @Patch('/shared/:id')
+  increaseSharing(@Param('id') postId: string) {
+    const id = parseInt(postId, 10);
+    return this.postService.increaseSharing(+id);
+  }
+
+  @Patch('/repost/:id')
+  increaseRepost(@Param('id') postId: string) {
+    const id = parseInt(postId, 10);
+    return this.postService.increaseRepost(+id);
+  }
 }
