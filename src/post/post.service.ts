@@ -72,7 +72,7 @@ export class PostService {
     }
 
     async create(createPostDto: CreatePostDto) {
-        const { description, userId, tags, postBody } = createPostDto;
+        const { description, userId, tags, postBody, user_status } = createPostDto;
         // Create or connect the tags to the actual post.
         const tagsConnectOrCreate = tags.map(tag => ({
             where: { name: tag.name },
@@ -93,6 +93,7 @@ export class PostService {
         return this.prisma.post.create({
           data: {
             description,
+            user_status,
             user: {
                 connect: { id: userId } 
             },
@@ -112,7 +113,7 @@ export class PostService {
     }
 
     async editPost(postId: number, updatePostDto: UpdatePostDto, user: AuthUserProps) {
-        const { description, userId, tags, postBody } = updatePostDto;
+        const { description, userId, tags, postBody, user_status } = updatePostDto;
         const postToUpdate = await this.prisma.post.findUnique({
             where: { id: postId }
         });
@@ -151,6 +152,7 @@ export class PostService {
           where: { id: postId},
           data: {
               description,
+              user_status,
               tags: {
                   create: tagsConnectOrCreate.map(tag => ({
                       tag: {

@@ -1,4 +1,4 @@
-import { PostType } from "@prisma/client";
+import { PostType, UserChoiceStatus } from "@prisma/client";
 import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min, ValidateNested } from "class-validator";
 import { Type } from "class-transformer"
 
@@ -32,6 +32,11 @@ export class CreatePostDto {
     @ValidateNested()
     @Type(() => postBodyDto)
     postBody: postBodyDto[]
+
+    @IsEnum(UserChoiceStatus)
+    @Type(() => String)
+    user_status: UserChoiceStatus;
+
 }
 
 class CreateTagFromPostDto {
@@ -56,7 +61,3 @@ class postContentDto {
     content: string;
 }
 
-export class IncreaseViewPostDto {
-    @IsNumber()
-    view: number;
-}
