@@ -1,15 +1,18 @@
 ## Les commentaires doivent acceuillir des réponses et des réactions.
-- post like
+- post like = table pour les likes
 
 
-- comment like
+- comment like = table pour les likes
+
 - comment reaction : heart, thumb, smiley...
-- comment response
+
+- comment response : la table comment doit être polymorphique
     - response to comment response
 
 
 - message reaction: heart, thumb, smiley...
-- message response
+
+- message response : ça sera sur instant message
     - response to message response
 
 

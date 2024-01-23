@@ -13,5 +13,13 @@ export class SearchPostDto {
     @IsOptional()
     orderBy: string;
 
+
+    @IsString()
+    @IsOptional()
+    page: string;
+
+    @IsString()
+    @IsOptional()
+    perPage: string;
 }
 

@@ -17,6 +17,7 @@ export class PostService {
 
   // In this method we will use the params : pagination, search (user, tag), orbderBy (view, share, likes, comments)
     async findAll(query: SearchPostDto) {
+      // Add to the findAll a system to retrieve post with user_status and modo_status
       let orderByClause: any = {};
       const orderByWhat = query.orderByWhat; // ça peut être views / repost
       const orderBy = query.orderBy;
@@ -33,10 +34,17 @@ export class PostService {
         } };
       }
 
+      const currentPage = Math.max(Number(query.page || 1), 1)
+      const perPage = query.perPage ? Number(query.perPage) : 10;
+      const paginateOptions = {
+        take: perPage,
+        skip: query.page ? (currentPage - 1) * perPage : 0
+      }
       return this.prisma.post.findMany({
         orderBy: [
           orderByClause
         ],
+        ...paginateOptions,
         include: {
               user: true,
               // comments: true,
