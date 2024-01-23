@@ -6,6 +6,9 @@ export class CreateSalonDto {
     name: string;
 
     @IsString()
+    description: string;
+
+    @IsString()
     @IsOptional()
     logo: string;
 
