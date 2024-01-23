@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 import * as argon2 from 'argon2';
 import { roleSeeder } from './roleSeeder';
+import { fakerPost } from './postFaker';
 
 // In order to create seeds, use "npm run seed"
 
@@ -32,8 +33,14 @@ const fakerSalon = (): any => ({
   userId: 1, // Associé à l'id de l'utilisateur 1
 });
 
+
+
+
+
 async function main() {
   const fakerRounds = 20;
+  const fakerPostRounds = 25;
+
   dotenv.config();
   console.log('Seeding...');
   // /// --------- Users && Annonces && Contacts --------------- ///
@@ -89,6 +96,10 @@ async function main() {
     // await prisma.user.create({ data: fakerUser() });
     // await prisma.contact.create({ data: fakerContact() });
     await prisma.salon.create({ data: fakerSalon() });
+  }
+
+  for (let i = 0; i < fakerPostRounds; i++) {
+    await prisma.post.create({ data: fakerPost() });
   }
 
   console.log('Seeding done !');

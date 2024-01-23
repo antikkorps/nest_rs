@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { VerifyRoles, jwtGuard } from 'src/auth/guard';
@@ -13,7 +14,8 @@ import { PostService } from './post.service';
 import { CreatePostDto } from './dto/CreatePost.dto';
 import { UpdatePostDto } from './dto/UpdatePost.dto';
 import { User } from 'helpers/getUser';
-import { AuthUserProps } from 'types/all';
+import { AuthUserProps, PostProps } from 'types/all';
+import { SearchPostDto } from './dto/SearchPost.dto';
 
 @Controller('post')
 export class PostController {
@@ -21,8 +23,8 @@ export class PostController {
 
   // @UseGuards(jwtGuard, new VerifyRoles('admin'))
   @Get()
-  getPosts() {
-    return this.postService.findAll();
+  getPosts(@Query() query: SearchPostDto): Promise<PostProps[]> {
+    return this.postService.findAll(query);
   }
 
   @UseGuards(jwtGuard)

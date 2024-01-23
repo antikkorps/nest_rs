@@ -8,17 +8,38 @@ import { AuthUserProps } from 'types/all';
 import { CreatePostDto } from './dto/CreatePost.dto';
 import { UpdatePostDto } from './dto/UpdatePost.dto';
 import { isOwnerOrSuperAdmin } from 'policies/isAdminOrOwner';
+import { SearchPostDto } from './dto/SearchPost.dto';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class PostService {
   constructor(public prisma: PrismaService) {}
 
   // In this method we will use the params : pagination, search (user, tag), orbderBy (view, share, likes, comments)
-    async findAll() {
+    async findAll(query: SearchPostDto) {
+      let orderByClause: any = {};
+      const orderByWhat = query.orderByWhat; // ça peut être views / repost
+      const orderBy = query.orderBy;
+
+      if (!orderByWhat || !orderBy) {
+        orderByClause = { createdAt: "desc" };
+      }
+      else if (['views', 'repost', 'shared', 'createdAt', 'updatedAt'].includes(orderByWhat)) {
+        orderByClause = { [orderByWhat]: orderBy };
+      }
+      else if (['likes, comments']) {
+        orderByClause = { [orderByWhat]: {
+          _count: orderBy
+        } };
+      }
+
       return this.prisma.post.findMany({
+        orderBy: [
+          orderByClause
+        ],
         include: {
               user: true,
-              comments: true,
+              // comments: true,
               tags: true,
               postTypeChoice: {
                   include: {
@@ -208,7 +229,7 @@ export class PostService {
         return await this.prisma.post.update({
           where: { id },
           data: {
-            views: newViews.toString(),
+            views: newViews,
           }
         })
       } else {
@@ -228,7 +249,7 @@ export class PostService {
         return await this.prisma.post.update({
           where: { id },
           data: {
-            shared: newSharing.toString(),
+            shared: newSharing,
           }
         })
       } else {
@@ -248,7 +269,7 @@ export class PostService {
         return await this.prisma.post.update({
           where: { id },
           data: {
-            repost: newRepost.toString(),
+            repost: newRepost,
           }
         })
       } else {

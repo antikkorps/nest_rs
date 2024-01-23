@@ -58,16 +58,17 @@ model User {
 
 // Everything related to posts, comments && likes
 model Post {
-  id          Int         @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   description String?
-  views       String?
-  shared      String?
-  repost      String?
-  userId      Int
-  user        User        @relation("posts", fields: [userId], references: [id])
-  tags        PostTag[]   @relation("postTags")
+
+  views      Int?
+  shared     Int?
+  repost     Int?
+  userId     Int
+  user       User        @relation("posts", fields: [userId], references: [id])
+  tags       PostTag[]   @relation("postTags")
   // Maybe we can delete mediaPost
-  mediaPosts  MediaPost[] @relation("mediaPost")
+  mediaPosts MediaPost[] @relation("mediaPost")
 
   likes          Like[]       @relation("postLikes")
   comments       Comment[]    @relation("postComments")
@@ -78,6 +79,10 @@ model Post {
   postTypeChoice PostTypeChoice[] @relation("postType")
   modo_status    ModoChoiceStatus @default(PENDING)
   user_status    UserChoiceStatus @default(DRAFT)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   @@index([userId, id], name: "main_post_index")
   @@map("posts")
