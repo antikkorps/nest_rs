@@ -8,17 +8,46 @@ import { AuthUserProps } from 'types/all';
 import { CreatePostDto } from './dto/CreatePost.dto';
 import { UpdatePostDto } from './dto/UpdatePost.dto';
 import { isOwnerOrSuperAdmin } from 'policies/isAdminOrOwner';
+import { SearchPostDto } from './dto/SearchPost.dto';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class PostService {
   constructor(public prisma: PrismaService) {}
 
   // In this method we will use the params : pagination, search (user, tag), orbderBy (view, share, likes, comments)
-    async findAll() {
+    async findAll(query: SearchPostDto) {
+      // Add to the findAll a system to retrieve post with user_status and modo_status
+      let orderByClause: any = {};
+      const orderByWhat = query.orderByWhat; // ça peut être views / repost
+      const orderBy = query.orderBy;
+
+      if (!orderByWhat || !orderBy) {
+        orderByClause = { createdAt: "desc" };
+      }
+      else if (['views', 'repost', 'shared', 'createdAt', 'updatedAt'].includes(orderByWhat)) {
+        orderByClause = { [orderByWhat]: orderBy };
+      }
+      else if (['likes, comments']) {
+        orderByClause = { [orderByWhat]: {
+          _count: orderBy
+        } };
+      }
+
+      const currentPage = Math.max(Number(query.page || 1), 1)
+      const perPage = query.perPage ? Number(query.perPage) : 10;
+      const paginateOptions = {
+        take: perPage,
+        skip: query.page ? (currentPage - 1) * perPage : 0
+      }
       return this.prisma.post.findMany({
+        orderBy: [
+          orderByClause
+        ],
+        ...paginateOptions,
         include: {
               user: true,
-              comments: true,
+              // comments: true,
               tags: true,
               postTypeChoice: {
                   include: {
@@ -65,14 +94,14 @@ export class PostService {
       
       await this.prisma.postTag.deleteMany({ where: { postId: id } });
       await this.prisma.postTypeChoice.deleteMany({ where: { postId: id } });
-
+      await this.prisma.pinnedPost.deleteMany({where: { postId: id} });
       return this.prisma.post.delete({
         where: { id },
       });
     }
 
     async create(createPostDto: CreatePostDto) {
-        const { description, userId, tags, postBody } = createPostDto;
+        const { description, userId, tags, postBody, user_status } = createPostDto;
         // Create or connect the tags to the actual post.
         const tagsConnectOrCreate = tags.map(tag => ({
             where: { name: tag.name },
@@ -93,6 +122,7 @@ export class PostService {
         return this.prisma.post.create({
           data: {
             description,
+            user_status,
             user: {
                 connect: { id: userId } 
             },
@@ -112,7 +142,7 @@ export class PostService {
     }
 
     async editPost(postId: number, updatePostDto: UpdatePostDto, user: AuthUserProps) {
-        const { description, userId, tags, postBody } = updatePostDto;
+        const { description, userId, tags, postBody, user_status } = updatePostDto;
         const postToUpdate = await this.prisma.post.findUnique({
             where: { id: postId }
         });
@@ -151,6 +181,7 @@ export class PostService {
           where: { id: postId},
           data: {
               description,
+              user_status,
               tags: {
                   create: tagsConnectOrCreate.map(tag => ({
                       tag: {
@@ -206,7 +237,7 @@ export class PostService {
         return await this.prisma.post.update({
           where: { id },
           data: {
-            views: newViews.toString(),
+            views: newViews,
           }
         })
       } else {
@@ -226,7 +257,7 @@ export class PostService {
         return await this.prisma.post.update({
           where: { id },
           data: {
-            shared: newSharing.toString(),
+            shared: newSharing,
           }
         })
       } else {
@@ -246,12 +277,52 @@ export class PostService {
         return await this.prisma.post.update({
           where: { id },
           data: {
-            repost: newRepost.toString(),
+            repost: newRepost,
           }
         })
       } else {
         throw new NotFoundException('Post not found');
       }
  
+    }
+
+    async addPinnedPost(id: number, user: AuthUserProps) {
+      // I added the where userId verification, then the isAuthorizeToPinned is not 100% usefull I think cause the 404 will be triggered before the authorization...
+      // But for now I maybe let a failure, so more security is better
+      const post = await this.prisma.post.findUnique({
+        where: { id: id, userId: user.id },
+      })
+      if(post) {
+        const isAuthorizeToPinned = await isOwnerOrSuperAdmin({
+          ownerId: post.userId,
+            user: user
+        }); 
+        if(!isAuthorizeToPinned) throw new ForbiddenException("You don't have permission to edit this post.");
+        
+        // We need to check if post is actually pinned.
+        const existingPinnedPost = await this.prisma.pinnedPost.findFirst({
+          where: {
+            userId: user.id,
+            postId: id,
+          },
+        });
+        if(existingPinnedPost) {
+          return await this.prisma.pinnedPost.update({
+            where: { id: existingPinnedPost.id},
+            data: {
+              deletedAt: existingPinnedPost.deletedAt === null ? new Date() : null
+            }
+          })
+        } else {
+          return  await this.prisma.pinnedPost.create({
+            data: {
+              userId: user.id,
+              postId: id,
+            },
+          });
+        }
+      } else {
+        throw new NotFoundException('Post not found');
+      }   
     }
 }

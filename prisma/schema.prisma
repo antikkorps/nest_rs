@@ -58,16 +58,17 @@ model User {
 
 // Everything related to posts, comments && likes
 model Post {
-  id          Int         @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   description String?
-  views       String?
-  shared      String?
-  repost      String?
-  userId      Int
-  user        User        @relation("posts", fields: [userId], references: [id])
-  tags        PostTag[]   @relation("postTags")
+
+  views      Int?
+  shared     Int?
+  repost     Int?
+  userId     Int
+  user       User        @relation("posts", fields: [userId], references: [id])
+  tags       PostTag[]   @relation("postTags")
   // Maybe we can delete mediaPost
-  mediaPosts  MediaPost[] @relation("mediaPost")
+  mediaPosts MediaPost[] @relation("mediaPost")
 
   likes          Like[]       @relation("postLikes")
   comments       Comment[]    @relation("postComments")
@@ -76,6 +77,12 @@ model Post {
 
   // Add for the post Content by Karl 12/01
   postTypeChoice PostTypeChoice[] @relation("postType")
+  modo_status    ModoChoiceStatus @default(PENDING)
+  user_status    UserChoiceStatus @default(DRAFT)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   @@index([userId, id], name: "main_post_index")
   @@map("posts")
@@ -89,16 +96,17 @@ enum PostType {
   SHAREDMEDIA
 }
 
-// enum ModoStatus {
-//   PENDING
-//   APPROUVED
-//   DISAPPROUVED
-// }
-// enum UserStatus {
-//   ARCHIVED
-//   ACTIVE
-//   INACTIVE
-// }
+enum ModoChoiceStatus {
+  PENDING
+  VALIDATED
+  MODERATED
+}
+
+enum UserChoiceStatus {
+  DRAFT
+  ARCHIVED
+  PUBLISHED
+}
 
 model PostTypeChoice {
   id      Int           @id @default(autoincrement())
@@ -120,11 +128,12 @@ model PostContent {
 }
 
 model PinnedPost {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   postId    Int
   userId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   user User @relation("userPinnedPost", fields: [userId], references: [id])
   post Post @relation("pinnedPost", fields: [postId], references: [id])
@@ -305,14 +314,15 @@ model Subscription {
 }
 
 model Salon {
-  id      Int     @id @default(autoincrement())
-  name    String
-  logo    String?
-  street  String
-  zipcode String
-  country String
-  userId  Int
-  user    User    @relation("userToSalons", fields: [userId], references: [id])
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  logo        String?
+  street      String
+  zipcode     String
+  country     String
+  userId      Int
+  user        User    @relation("userToSalons", fields: [userId], references: [id])
 
   @@map("salons")
 }
