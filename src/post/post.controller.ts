@@ -114,4 +114,11 @@ export class PostController {
     const id = parseInt(postId, 10);
     return this.postService.getComment(+id);
   }
+  
+  @UseGuards(jwtGuard)
+  @Post('/savePost/:id')
+  savePost(@Param('id') postId: string, @User() user: AuthUserProps) {
+    const id = parseInt(postId, 10);
+    return this.postService.savePost(+id, user);
+  }
 }

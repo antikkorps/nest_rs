@@ -27,11 +27,49 @@ export class UserService {
     });
   }
   async getUserById(userId: number) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({ 
+      where: { id: userId },
+      include: {
+        roles: true,
+        pinned_post: {
+          select: {
+            postId: true,
+          },
+          orderBy: {
+            post: {
+              createdAt: 'desc'
+            }
+          }
+        },
+        savedPost: {
+          select: {
+            postId: true,
+          },
+          orderBy: {
+            post: {
+              createdAt: 'desc'
+            }
+          }
+        },
+        userlikes: {
+          select: {
+            likeType: true,
+            likedItemId: true,
+          },
+          orderBy: {
+            post: {
+              createdAt: 'desc'
+            }
+          }
+        }
+      },
+    });
     delete user.password;
     return user;
   }
   async deleteUser(userId: number) {
     return this.prisma.user.delete({ where: { id: userId } });
   }
+
+
 }
