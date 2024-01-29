@@ -66,8 +66,11 @@ export class PostService {
             orderBy: {
               createdAt: "desc"
             },
+            where : {
+              parentId: null
+            },
             ...paginateCommentOptions,
-            select: COMMENT_SELECT_FIELDS
+            select: COMMENT_SELECT_FIELDS,
           },
           tags: true,
           postTypeChoice: {
@@ -75,7 +78,10 @@ export class PostService {
                   content: true
               }
           },
-          likes: true
+          likes: true,
+          _count: {
+            select: { comments: true },
+          },
         },
         where: {
           ...(tagsArray.length > 0 && {
