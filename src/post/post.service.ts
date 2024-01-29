@@ -10,17 +10,25 @@ import { UpdatePostDto } from './dto/UpdatePost.dto';
 import { isOwnerOrSuperAdmin } from 'policies/isAdminOrOwner';
 import { SearchPostDto } from './dto/SearchPost.dto';
 import { isEmpty } from 'class-validator';
+import { CreateCommentDto } from './dto/commentsDTO/CreateComment.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostService {
   constructor(public prisma: PrismaService) {}
 
-  // In this method we will use the params : pagination, search (user, tag), orbderBy (view, share, likes, comments)
+    //  I need to add the tag on the search params.
     async findAll(query: SearchPostDto) {
       // Add to the findAll a system to retrieve post with user_status and modo_status
       let orderByClause: any = {};
       const orderByWhat = query.orderByWhat; // ça peut être views / repost
       const orderBy = query.orderBy;
+
+      const tagsString = query.tags; 
+      let tagsArray = [];
+      if(tagsString) {
+        tagsArray = tagsString.split(',');
+      }
 
       if (!orderByWhat || !orderBy) {
         orderByClause = { createdAt: "desc" };
@@ -40,23 +48,48 @@ export class PostService {
         take: perPage,
         skip: query.page ? (currentPage - 1) * perPage : 0
       }
-      return this.prisma.post.findMany({
+
+
+      const currentCommentPage = Math.max(Number(1), 1)
+      const paginateCommentOptions = {
+        take: 2,
+        skip: query.page ? (currentCommentPage - 1) * perPage : 0
+      }
+      const posts = this.prisma.post.findMany({
         orderBy: [
           orderByClause
         ],
         ...paginateOptions,
         include: {
-              user: true,
-              // comments: true,
-              tags: true,
-              postTypeChoice: {
-                  include: {
-                      content: true
-                  }
-              },
-              likes: true
-          }
+          user: true,
+          comments: {
+            orderBy: {
+              createdAt: "desc"
+            },
+            ...paginateCommentOptions,
+            select: COMMENT_SELECT_FIELDS
+          },
+          tags: true,
+          postTypeChoice: {
+              include: {
+                  content: true
+              }
+          },
+          likes: true
+        },
+        where: {
+          ...(tagsArray.length > 0 && {
+            tags: {
+              some: {
+                tagName: {
+                  in: tagsArray
+                }
+              }
+            }
+          })
+        }
       }); 
+      return posts;
     }
 
     async findOne(id: number) {
@@ -64,7 +97,12 @@ export class PostService {
         where: { id },
         include: {
           user: true,
-          comments: true,
+          comments: {
+            orderBy: {
+              createdAt: "desc"
+            },
+            select: COMMENT_SELECT_FIELDS
+          },
           tags: true,
           postTypeChoice: {
               include: {
@@ -192,7 +230,23 @@ export class PostService {
               postTypeChoice: {
                   create: postTypeChoiceCreate,
               },
-          }
+          },
+          include: {
+            user: true,
+            comments: {
+              orderBy: {
+                createdAt: "desc"
+              },
+              select: COMMENT_SELECT_FIELDS
+            },
+            tags: true,
+            postTypeChoice: {
+              include: {
+                content: true,
+              },
+            },
+            likes: true,
+          },
       })
 
       return updatedPost;
@@ -209,7 +263,12 @@ export class PostService {
         },
         include: {
           user: true,
-          comments: true,
+          comments: {
+            orderBy: {
+              createdAt: "desc"
+            },
+            select: COMMENT_SELECT_FIELDS
+          },
           tags: true,
           postTypeChoice: {
             include: {
@@ -325,4 +384,119 @@ export class PostService {
         throw new NotFoundException('Post not found');
       }   
     }
+
+    async createComment(id: number, user: AuthUserProps, createCommentDto: CreateCommentDto) {
+      const { description, parentId } = createCommentDto;
+
+      const post = await this.prisma.post.findUnique({
+        where: {id}
+      });
+      if(!post) throw new NotFoundException('Post not found');
+       
+      const comment = await this.prisma.comment.create({
+        data: {
+          description: description,
+          userId: user.id,
+          parentId: parentId,
+          postId: id
+        },
+        select: COMMENT_SELECT_FIELDS
+      })
+      return comment;
+
+    }
+
+    async getComment(id: number) {
+      //  I will get some params : skip / perPage
+
+      const post = await this.prisma.post.findUnique({
+        where: {id}
+      })
+      if (!post) throw new NotFoundException('Post not found');
+   
+      const rootComment = await this.prisma.$queryRaw<any[]>`
+      WITH RECURSIVE comments_with_children AS (
+        SELECT
+          c.id,
+          c.description,
+          c."postId",
+          c."parentId",
+          c."userId",
+          c."createdAt",
+          0 AS level,
+          ARRAY[c.id] AS path
+        FROM comments c
+        WHERE c."postId" = ${post.id} AND c."parentId" IS NULL
+        UNION ALL
+        SELECT
+          c.id,
+          c.description,
+          c."postId",
+          c."parentId",
+          c."userId",
+          c."createdAt",
+          p.level + 1,
+          p.path || c.id
+        FROM comments c
+        JOIN comments_with_children p ON c."parentId" = p.id
+      )
+      SELECT
+        c.id,
+        c.description,
+        c."postId",
+        c."parentId",
+        c."userId",
+        c."createdAt",
+        c.level
+      FROM comments_with_children c
+      ORDER BY c.path, c."createdAt", c.id
+      LIMIT 2;
+    `;
+    
+    // rootComments contiendra les commentaires de niveau supérieur avec tous leurs enfants
+    
+    
+    // rootComments contiendra les commentaires de niveau supérieur avec tous leurs enfants
+    
+      return rootComment;
+
+      // Supposons que `rootComment` contient le résultat de la requête SQL
+    const comments = rootComment.map(comment => ({ ...comment, children: [] }));
+
+    // Créer un dictionnaire pour accéder rapidement aux commentaires par leur ID
+    const commentDictionary = {};
+    comments.forEach(comment => {
+      commentDictionary[comment.id] = comment;
+    });
+
+    // Ajouter les réponses aux commentaires appropriés
+    comments.forEach(comment => {
+      const parentId = comment.parentId;
+      if (parentId && commentDictionary[parentId]) {
+        commentDictionary[parentId].children.push(comment);
+      }
+    });
+
+    // Filtrer les commentaires principaux (ceux avec `parentId` nul)
+    const rootComments = comments.filter(comment => !comment.parentId);
+
+    // `rootComments` maintenant contient une structure imbriquée avec les commentaires et leurs réponses
+    // console.log(rootComments);
+    return rootComments
+
+    }
 }
+
+const COMMENT_SELECT_FIELDS = {
+  id: true,
+  description: true,
+  parentId: true,
+  createdAt: true,
+  user: {
+    select: {
+      id: true,
+      lastName: true,
+    },
+  },
+}
+
