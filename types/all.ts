@@ -21,7 +21,7 @@ export interface PostProps {
     deleteAt?: Date | undefined;
 }
 interface PostTagProps {
-    id: number;
+    // id: number;
     postId: number;
     // post: PostProps;
     tagName: string;
@@ -127,10 +127,16 @@ interface LikeProps {
 interface CommentProps {
     id: number;
     description?: string;
-    postId: number;
+    // postId: number;
     // post: PostProps;
-    userId: number;
+    // userId: number;
     // user: UserProps;
+    user: {
+        id: AuthUserProps["id"];
+        lastName: AuthUserProps["lastName"];
+    }
+    parentId?: number;
+    createdAd?: Date | undefined;
 }
 
 interface SavedPostProps {

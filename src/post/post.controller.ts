@@ -16,6 +16,7 @@ import { UpdatePostDto } from './dto/UpdatePost.dto';
 import { User } from 'helpers/getUser';
 import { AuthUserProps, PostProps } from 'types/all';
 import { SearchPostDto } from './dto/SearchPost.dto';
+import { CreateCommentDto } from './dto/commentsDTO/CreateComment.dto';
 
 @Controller('post')
 export class PostController {
@@ -46,7 +47,7 @@ export class PostController {
 
   @UseGuards(jwtGuard)
   @Get(':id')
-  findOne(@Param('id') postId: string) {
+  findOne(@Param('id') postId: string): Promise<PostProps> {
     const id = parseInt(postId, 10);
     return this.postService.findOne(+id);
   }
@@ -91,5 +92,26 @@ export class PostController {
   addPinnedPost(@Param('id') postId: string, @User() user: AuthUserProps) {
     const id = parseInt(postId, 10);
     return this.postService.addPinnedPost(+id, user);
+  }
+
+  @UseGuards(jwtGuard)
+  @Post('/:id/comment')
+  createComment(
+    @Param('id') postId: string, 
+    @User() user: AuthUserProps, 
+    @Body() createCommentDto: CreateCommentDto) {
+    const id = parseInt(postId, 10);
+    return this.postService.createComment(
+      +id, 
+      user,
+      createCommentDto
+    )
+  }
+
+  // @UseGuards(jwtGuard)
+  @Get('/comment/:id')
+  getComment(@Param('id') postId: string) {
+    const id = parseInt(postId, 10);
+    return this.postService.getComment(+id);
   }
 }
