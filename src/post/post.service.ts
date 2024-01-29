@@ -407,26 +407,46 @@ export class PostService {
     }
 
     async getComment(id: number) {
-      //  I will get some params : skip / perPage
-
+      
+      // I start checking if the post exist
       const post = await this.prisma.post.findUnique({
         where: {id}
       })
       if (!post) throw new NotFoundException('Post not found');
    
-      const rootComment = await this.prisma.$queryRaw<any[]>`
-      WITH RECURSIVE comments_with_children AS (
+      // Then I take the x last roots comment
+      // We need to implement here all the dynamic part of the cursor pagination, Cursor is missing here
+
+      // We can add too, an order by like count for example.
+      const rootComment = await this.prisma.comment.findMany({
+        take: 10,
+        // skip: 1,
+        where: {
+          postId: id,
+          parentId: null
+        },
+        orderBy: {
+          createdAt: "desc"
+        }
+      })
+      const postIdArray = rootComment.map(comment => comment.id);
+  
+      // Now we get the children of the root comment.
+      // I let some comments here -> it was my first request, when I only used one request to get parent and child. Now i try with one fct to get parent, and this query to retrieve child.
+      const getChildren = await this.prisma.$queryRaw<any[]>`
+      WITH RECURSIVE comments_with_children (id, description, "postId", "parentId", "userId", "createdAt", level) AS (
         SELECT
-          c.id,
-          c.description,
-          c."postId",
-          c."parentId",
-          c."userId",
-          c."createdAt",
-          0 AS level,
-          ARRAY[c.id] AS path
-        FROM comments c
-        WHERE c."postId" = ${post.id} AND c."parentId" IS NULL
+          id,
+          description,
+          "postId",
+          "parentId",
+          "userId",
+          "createdAt",
+          0
+        FROM comments
+        -- WHERE "postId" = ${post.id}
+        WHERE "id" = ANY (${postIdArray})
+        -- AND "parentId" IS NULL
         UNION ALL
         SELECT
           c.id,
@@ -435,41 +455,24 @@ export class PostService {
           c."parentId",
           c."userId",
           c."createdAt",
-          p.level + 1,
-          p.path || c.id
-        FROM comments c
-        JOIN comments_with_children p ON c."parentId" = p.id
+          comments_with_children.level + 1
+        FROM comments c, comments_with_children
+        WHERE c."parentId" = comments_with_children.id
       )
-      SELECT
-        c.id,
-        c.description,
-        c."postId",
-        c."parentId",
-        c."userId",
-        c."createdAt",
-        c.level
-      FROM comments_with_children c
-      ORDER BY c.path, c."createdAt", c.id
-      LIMIT 2;
+      SELECT id, description, "postId", "parentId", "userId", "createdAt", level
+      FROM comments_with_children
+      ORDER BY "createdAt" DESC;
     `;
-    
-    // rootComments contiendra les commentaires de niveau supérieur avec tous leurs enfants
-    
-    
-    // rootComments contiendra les commentaires de niveau supérieur avec tous leurs enfants
-    
-      return rootComment;
 
-      // Supposons que `rootComment` contient le résultat de la requête SQL
-    const comments = rootComment.map(comment => ({ ...comment, children: [] }));
+    const comments = getChildren.map(comment => ({ ...comment, children: [] }));
 
-    // Créer un dictionnaire pour accéder rapidement aux commentaires par leur ID
+    // Create a dictionnary to get all the comment Id
     const commentDictionary = {};
     comments.forEach(comment => {
       commentDictionary[comment.id] = comment;
     });
 
-    // Ajouter les réponses aux commentaires appropriés
+    // Add the response to the parent 
     comments.forEach(comment => {
       const parentId = comment.parentId;
       if (parentId && commentDictionary[parentId]) {
@@ -477,12 +480,9 @@ export class PostService {
       }
     });
 
-    // Filtrer les commentaires principaux (ceux avec `parentId` nul)
-    const rootComments = comments.filter(comment => !comment.parentId);
-
-    // `rootComments` maintenant contient une structure imbriquée avec les commentaires et leurs réponses
-    // console.log(rootComments);
-    return rootComments
+    // Filter the parentId null comments.
+    const getComments = comments.filter(comment => !comment.parentId);
+    return getComments
 
     }
 }
