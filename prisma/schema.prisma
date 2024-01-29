@@ -137,6 +137,8 @@ model PinnedPost {
 
   user User @relation("userPinnedPost", fields: [userId], references: [id])
   post Post @relation("pinnedPost", fields: [postId], references: [id])
+  
+  @@map("pinnedPosts")
 }
 
 // We certainly can delete this model MediaPost now
@@ -164,25 +166,35 @@ model SavedPost {
 }
 
 model PostTag {
+  // A tester avec ce nouvel "ID"
   id     Int  @id @default(autoincrement())
   postId Int
   post   Post @relation("postTags", fields: [postId], references: [id], onDelete: Cascade)
 
-  tagName String?
-  tag     Tag?    @relation("tagName", fields: [tagName], references: [name])
+  tagName String
+  tag     Tag    @relation("tagName", fields: [tagName], references: [name])
 
-  // @@id([postId])
+  // @@id([postId, tagName])
   // @@unique([postId, tagName])
   @@map("postsTags")
 }
 
+
 model Comment {
   id          Int     @id @default(autoincrement())
   description String?
+  
   postId      Int
-  post        Post    @relation("postComments", fields: [postId], references: [id])
+  post        Post    @relation("postComments", fields: [postId], references: [id], onDelete: Cascade)
   userId      Int
-  user        User    @relation("userComments", fields: [userId], references: [id])
+  user        User    @relation("userComments", fields: [userId], references: [id], onDelete: Cascade)
+
+  parent      Comment?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Comment[] @relation("ParentChild")
+  parentId    Int? 
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("comments")
 }
@@ -200,11 +212,12 @@ model Like {
   id          Int      @id @default(autoincrement())
   likeType    LikeType
   likedItemId Int
-  userLiking  User     @relation("userLiking", fields: [userId], references: [id])
+  userLiking  User     @relation("userLiking", fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   createdAt   DateTime @default(now())
 
-  post Post? @relation("postLikes", fields: [likedItemId], references: [id])
+  post Post? @relation("postLikes", fields: [likedItemId], references: [id], onDelete: Cascade)
+  // Do we need relation here for all the enums? As we can add the on delete cascade
 
   @@unique([userId, likedItemId])
   @@index([userId, likedItemId], name: "main_like_index")

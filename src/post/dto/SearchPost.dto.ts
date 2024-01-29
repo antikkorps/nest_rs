@@ -21,5 +21,10 @@ export class SearchPostDto {
     @IsString()
     @IsOptional()
     perPage: string;
+
+    @IsString()
+    @IsOptional()
+    tags: string;
+
 }
 
