@@ -3,23 +3,29 @@ import { BannerStatus, ImageStatus, LikeType, PostType, ReportType, Sex } from "
 export interface PostProps {
     id: number;
     description?: string;
-    views?: BigInt;
-    shared?: BigInt;
+    views?: number;
+    shared?: number;
+    repost?: number;
     userId: number; 
 
     user: UserProps;
     tags?: PostTagProps[];
+    
     likes?: LikeProps[];
     comments?: CommentProps[];
     userSavedPosts?: SavedPostProps[];
     postTypeChoice: PostTypeChoiceProps[];
+
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+    deleteAt?: Date | undefined;
 }
 interface PostTagProps {
-    id: number;
+    // id: number;
     postId: number;
-    post: PostProps;
-    tagSlug: string;
-    tag: TagProps
+    // post: PostProps;
+    tagName: string;
+    // tag: TagProps
 }
 
 
@@ -112,7 +118,7 @@ interface LikeProps {
     id: number;
     likeType: LikeType;
     likedItemId: number;
-    userLiking: UserProps;
+    // userLiking: UserProps;
     userId: number;
     createdAt: Date;
     post?: PostProps;
@@ -121,10 +127,16 @@ interface LikeProps {
 interface CommentProps {
     id: number;
     description?: string;
-    postId: number;
-    post: PostProps;
-    userId: number;
-    user: UserProps;
+    // postId: number;
+    // post: PostProps;
+    // userId: number;
+    // user: UserProps;
+    user: {
+        id: AuthUserProps["id"];
+        lastName: AuthUserProps["lastName"];
+    }
+    parentId?: number;
+    createdAd?: Date | undefined;
 }
 
 interface SavedPostProps {
@@ -182,20 +194,19 @@ interface SalonProps {
 interface TagProps {
     id: number;
     name: string;
-    slug: string;
     posts: PostTagProps[];
 }
 
 interface PostTypeChoiceProps {
     id: number;
-    post: PostProps;
+    // post: PostProps;
     postId: number;
     type: PostType;
-    content: PostContentProps;
+    content: PostContentProps[];
 }
 interface PostContentProps {
     id: number;
-    postType: PostType;
+    // postType: PostType;
     postTypeId: number;
     content: string;
 }
