@@ -66,8 +66,11 @@ export class PostService {
             orderBy: {
               createdAt: "desc"
             },
+            where : {
+              parentId: null
+            },
             ...paginateCommentOptions,
-            select: COMMENT_SELECT_FIELDS
+            select: COMMENT_SELECT_FIELDS,
           },
           tags: true,
           postTypeChoice: {
@@ -75,7 +78,10 @@ export class PostService {
                   content: true
               }
           },
-          likes: true
+          likes: true,
+          _count: {
+            select: { comments: true },
+          },
         },
         where: {
           ...(tagsArray.length > 0 && {
@@ -97,12 +103,6 @@ export class PostService {
         where: { id },
         include: {
           user: true,
-          comments: {
-            orderBy: {
-              createdAt: "desc"
-            },
-            select: COMMENT_SELECT_FIELDS
-          },
           tags: true,
           postTypeChoice: {
               include: {
@@ -145,9 +145,6 @@ export class PostService {
             where: { name: tag.name },
             create: { name: tag.name },
         }));
-
-        // Here we create all the post content from the postBody entry.
-        // It's an array of some data.
         const postTypeChoiceCreate = postBody.map(body => ({
             type: body.postTypeChoice,
             content: {
@@ -253,6 +250,7 @@ export class PostService {
     }
 
     async findByUser(id: number) {
+      // Add the same comments system than the findAll
       const user = await this.prisma.user.findUnique({
         where: {id}
       })
@@ -289,7 +287,6 @@ export class PostService {
       const post = await this.prisma.post.findUnique({
           where: { id }
       });
-      // return post.views +  BigInt(1);
       if(post) {
         const currentViews = post.views || 0;
         const newViews = Number(currentViews) + 1;
@@ -383,6 +380,32 @@ export class PostService {
       } else {
         throw new NotFoundException('Post not found');
       }   
+    }
+
+    async savePost(id: number, user: AuthUserProps) {
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+      })
+      if(!post) throw new NotFoundException('Post not found');
+
+      const existingSavedPost = await this.prisma.savedPost.findFirst({
+        where: {
+          userId: user.id,
+          postId: id,
+        },
+      });
+      if(existingSavedPost) {
+        return await this.prisma.savedPost.delete({
+          where: { id: existingSavedPost.id}, 
+        });
+      } else {
+        return await this.prisma.savedPost.create({
+          data: {
+            userId: user.id,
+            postId: id,
+          },
+        });
+      }
     }
 
     async createComment(id: number, user: AuthUserProps, createCommentDto: CreateCommentDto) {
