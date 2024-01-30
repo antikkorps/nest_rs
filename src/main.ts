@@ -3,12 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { useContainer } from 'class-validator';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:3000'], // URL front-end
+    origin: [configService.get('CORS_ORIGIN')], // URL front-end
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // allow cookies from front-end
   };
