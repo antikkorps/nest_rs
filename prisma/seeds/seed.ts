@@ -33,10 +33,6 @@ const fakerSalon = (): any => ({
   userId: 1, // Associé à l'id de l'utilisateur 1
 });
 
-
-
-
-
 async function main() {
   const fakerRounds = 20;
   const fakerPostRounds = 25;
