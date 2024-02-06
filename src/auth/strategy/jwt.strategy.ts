@@ -31,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   private static extractJwtFromCookie(req: RequestType): string | null {
-    const cookieName = 'inkagram_user_token';
+    const cookieName = process.env.SESSION_COOKIE;
     if(
       req.cookies && 
       cookieName in req.cookies &&

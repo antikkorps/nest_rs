@@ -49,7 +49,15 @@ export class AuthService {
         data: {
           email: dto.email,
           password,
-          pseudo
+          pseudo,
+          roles: {
+            create: [
+              {
+                assignedBy: 'Default',
+                roleSlug: 'guest',
+              },
+            ],
+          },
         },
         select: {
           id: true,
@@ -93,10 +101,10 @@ export class AuthService {
     if (!passwordMatches)
       throw new ForbiddenException('Utilisateur et/ou mot de passe incorrects');
 
-
+      
     const {access_token} = await this.signToken(user.id, user.email, concatenatedRoles);
    
-    response.cookie('inkagram_user_token', access_token, {
+    response.cookie(process.env.SESSION_COOKIE, access_token, {
       httpOnly: false,
       secure: false,
       sameSite: 'lax',
