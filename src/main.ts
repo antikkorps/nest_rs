@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { useContainer } from 'class-validator';
+import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
@@ -16,7 +17,7 @@ async function bootstrap() {
   };
 
   app.enableCors(corsOptions);
-
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Insure to protect from unwanted data

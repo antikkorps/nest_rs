@@ -56,6 +56,7 @@ async function main() {
       firstName: 'superadmin',
       lastName: 'superadmin',
       email: 'superadmin@admin.com',
+      pseudo: "super",
       password: await argon2.hash(process.env.ADMIN_PASSWORD),
       roles: {
         create: [
@@ -75,6 +76,7 @@ async function main() {
     data: {
       firstName: 'guest',
       lastName: 'guest',
+      pseudo: faker.random.word(),
       email: 'guest@admin.com',
       password: await argon2.hash(process.env.ADMIN_PASSWORD),
       roles: {
