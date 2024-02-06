@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
-
+import { Request as RequestType } from 'express';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
@@ -11,7 +11,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private prisma: PrismaService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        JwtStrategy.extractJwtFromCookie,
+        ExtractJwt.fromAuthHeaderAsBearerToken()
+      ]),
       secretOrKey: config.get('JWT_SECRET'),
     });
   }
@@ -25,5 +28,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
     delete user.password;
     return user;
+  }
+
+  private static extractJwtFromCookie(req: RequestType): string | null {
+    const cookieName = 'inkagram_user_token';
+    if(
+      req.cookies && 
+      cookieName in req.cookies &&
+      req.cookies[cookieName].length > 0
+    ) {
+      return req.cookies[cookieName];
+    }
+    return null;
   }
 }
