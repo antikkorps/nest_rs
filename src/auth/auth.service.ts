@@ -9,6 +9,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { createUserPseudo } from 'helpers/createUserPseudo';
 
 @Injectable()
 export class AuthService {
@@ -16,18 +17,47 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
-  ) {}
+  ) { }
 
   async signup(dto: AuthDto) {
     // Generate the password hash
+
+    const checkMail = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email
+      }
+    });
+    if (checkMail) {
+      throw new ForbiddenException('Cet email est déjà enregistré');
+    }
     const password = await argon.hash(dto.password);
     // Save the new user in the db
-
+    let pseudo: string;
+    let checkPseudo: any;
+    do {
+      pseudo = createUserPseudo();
+      checkPseudo = await this.prisma.user.findUnique({
+        where: {
+          pseudo: pseudo
+        }
+      });
+    } while (checkPseudo);
+   
+    // return pseudo;
     try {
       const user = await this.prisma.user.create({
         data: {
           email: dto.email,
           password,
+          pseudo,
+          roles: {
+            create: [
+              {
+                assignedBy: 'Default',
+                roleSlug: 'guest',
+              },
+            ],
+          },
         },
         select: {
           id: true,
@@ -46,7 +76,7 @@ export class AuthService {
       throw error;
     }
   }
-  async signin(dto: AuthDto) {
+  async signin(dto: AuthDto, response: any) {
     // find the user by email
     const user = await this.prisma.user.findUnique({
       where: {
@@ -66,11 +96,23 @@ export class AuthService {
     // Get the user roles
     const userRoles = user.roles.map(role => role.roleSlug.toString());
     // Join it in one strnig
-    const concatenatedRoles = userRoles.join(','); 
+    const concatenatedRoles = userRoles.join(',');
 
     if (!passwordMatches)
       throw new ForbiddenException('Utilisateur et/ou mot de passe incorrects');
-    return this.signToken(user.id, user.email, concatenatedRoles);
+
+      
+    const {access_token} = await this.signToken(user.id, user.email, concatenatedRoles);
+   
+    response.cookie(process.env.SESSION_COOKIE, access_token, {
+      httpOnly: false,
+      secure: false,
+      sameSite: 'lax',
+      domain: 'localhost',
+    });
+    return { access_token };
+
+    // return this.signToken(user.id, user.email, concatenatedRoles);
   }
   async signToken(
     userId: number,
