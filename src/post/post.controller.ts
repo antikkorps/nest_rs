@@ -66,7 +66,6 @@ export class PostController {
     return this.postService.findByUser(+id);
   }
 
-
   @Patch('/views/:id')
   increaseView(@Param('id') postId: string) {
     const id = parseInt(postId, 10);
@@ -97,15 +96,12 @@ export class PostController {
   @UseGuards(jwtGuard)
   @Post('/:id/comment')
   createComment(
-    @Param('id') postId: string, 
-    @User() user: AuthUserProps, 
-    @Body() createCommentDto: CreateCommentDto) {
+    @Param('id') postId: string,
+    @User() user: AuthUserProps,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
     const id = parseInt(postId, 10);
-    return this.postService.createComment(
-      +id, 
-      user,
-      createCommentDto
-    )
+    return this.postService.createComment(+id, user, createCommentDto);
   }
 
   // @UseGuards(jwtGuard)
@@ -114,7 +110,7 @@ export class PostController {
     const id = parseInt(postId, 10);
     return this.postService.getComment(+id);
   }
-  
+
   @UseGuards(jwtGuard)
   @Post('/savePost/:id')
   savePost(@Param('id') postId: string, @User() user: AuthUserProps) {

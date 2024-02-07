@@ -7,11 +7,11 @@ import { AuthUserProps } from 'types/all';
 
 @Controller('like')
 export class LikeController {
-    constructor(public likeService: LikeService) {}
+  constructor(public likeService: LikeService) {}
 
-    @UseGuards(jwtGuard)
-    @Post()
-    create(@Body() createLikeDto: CreateLikeDto,  @User() user: AuthUserProps) {
-      return this.likeService.create(createLikeDto, user);
-    }
+  @UseGuards(jwtGuard)
+  @Post()
+  create(@Body() createLikeDto: CreateLikeDto, @User() user: AuthUserProps) {
+    return this.likeService.create(createLikeDto, user);
+  }
 }
