@@ -1,212 +1,217 @@
-import { BannerStatus, ImageStatus, LikeType, PostType, ReportType, Sex } from "@prisma/client";
+import {
+  BannerStatus,
+  ImageStatus,
+  LikeType,
+  PostType,
+  ReportType,
+  Sex,
+} from '@prisma/client';
 
 export interface PostProps {
-    id: number;
-    description?: string;
-    views?: number;
-    shared?: number;
-    repost?: number;
-    userId: number; 
+  id: number;
+  description?: string;
+  views?: number;
+  shared?: number;
+  repost?: number;
+  userId: number;
 
-    user: UserProps;
-    tags?: PostTagProps[];
-    
-    likes?: LikeProps[];
-    comments?: CommentProps[];
-    userSavedPosts?: SavedPostProps[];
-    postTypeChoice: PostTypeChoiceProps[];
+  user: UserProps;
+  tags?: PostTagProps[];
 
-    createdAt?: Date | undefined;
-    updatedAt?: Date | undefined;
-    deleteAt?: Date | undefined;
+  likes?: LikeProps[];
+  comments?: CommentProps[];
+  userSavedPosts?: SavedPostProps[];
+  postTypeChoice: PostTypeChoiceProps[];
+
+  createdAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  deleteAt?: Date | undefined;
 }
 interface PostTagProps {
-    // id: number;
-    postId: number;
-    // post: PostProps;
-    tagName: string;
-    // tag: TagProps
+  // id: number;
+  postId: number;
+  // post: PostProps;
+  tagName: string;
+  // tag: TagProps
 }
-
 
 export interface AuthUserProps {
-    id: number;
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    webpage?: string;
-    avatar?: string;
-    birth?: Date;
-    sex?: Sex;
-    createdAt: Date;
-    updatedAt: Date;
-    roles?: RoleUserProps[]
+  id: number;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  webpage?: string;
+  avatar?: string;
+  birth?: Date;
+  sex?: Sex;
+  createdAt: Date;
+  updatedAt: Date;
+  roles?: RoleUserProps[];
 }
 interface UserProps extends AuthUserProps {
-    // subscriptions: SubscriptionProps[];
-    salons?: SalonProps[];
-    profile_image?: ProfileImageProps[];
-    banner_image?: BannerImageProps[];
+  // subscriptions: SubscriptionProps[];
+  salons?: SalonProps[];
+  profile_image?: ProfileImageProps[];
+  banner_image?: BannerImageProps[];
 
-    i_follow?: FollowProps[];
-    they_follow?: FollowProps[];
-    posts?: PostProps[];
-    savedPost?: SavedPostProps[];
-    userComments?: CommentProps[];
-    userLikes?: LikeProps[];
-    userReports?: ReportProps[];
-    messages_emitted?: InstantMessageProps[];
-    messages_received?: InstantMessageProps[];
+  i_follow?: FollowProps[];
+  they_follow?: FollowProps[];
+  posts?: PostProps[];
+  savedPost?: SavedPostProps[];
+  userComments?: CommentProps[];
+  userLikes?: LikeProps[];
+  userReports?: ReportProps[];
+  messages_emitted?: InstantMessageProps[];
+  messages_received?: InstantMessageProps[];
 }
 export interface RoleUserProps {
-    userId: number;
-    roleSlug: string;
-    user: UserProps;
-    role: RoleProps;
-    assignedAt: Date;
-    assignedBy?: string;
+  userId: number;
+  roleSlug: string;
+  user: UserProps;
+  role: RoleProps;
+  assignedAt: Date;
+  assignedBy?: string;
 }
 interface InstantMessageProps {
-    id: number;
-    createdAt: Date;
-    updatedAt: Date;
-    userEmitter: UserProps;
-    emitterId: number;
-    userReceiver: UserProps;
-    receiverId: number;
-    contents: MessageContentProps[];
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  userEmitter: UserProps;
+  emitterId: number;
+  userReceiver: UserProps;
+  receiverId: number;
+  contents: MessageContentProps[];
 }
 
 interface MessageContentProps {
-    id: number;
-    createdAt: Date;
-    updatedAt: Date;
-    instantMessage: InstantMessageProps;
-    instantMessageId: number;
-    textContent?: TextContentProps[];
-    emojiContent?: EmojiContentProps[];
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  instantMessage: InstantMessageProps;
+  instantMessageId: number;
+  textContent?: TextContentProps[];
+  emojiContent?: EmojiContentProps[];
 }
 interface EmojiContentProps {
-    emoji: EmojiProps;
-    emojiId: number;
-    messageContent: MessageContentProps;
-    messageContentId: number;
+  emoji: EmojiProps;
+  emojiId: number;
+  messageContent: MessageContentProps;
+  messageContentId: number;
 }
 interface TextContentProps {
-    id: number;
-    text: string;
-    messageContent: MessageContentProps;
-    messageContentId: number;
+  id: number;
+  text: string;
+  messageContent: MessageContentProps;
+  messageContentId: number;
 }
 interface EmojiProps {
-    id: number;
-    name: string;
-    slug: string;
-    emojiContent: EmojiContentProps[];
+  id: number;
+  name: string;
+  slug: string;
+  emojiContent: EmojiContentProps[];
 }
 
 interface ReportProps {
-    id: number;
-    content: string;
-    reportType: ReportType;
-    reportItemId: number;
-    userReporting: UserProps;
-    userId: number;
+  id: number;
+  content: string;
+  reportType: ReportType;
+  reportItemId: number;
+  userReporting: UserProps;
+  userId: number;
 }
 
 interface LikeProps {
-    id: number;
-    likeType: LikeType;
-    likedItemId: number;
-    // userLiking: UserProps;
-    userId: number;
-    createdAt: Date;
-    post?: PostProps;
+  id: number;
+  likeType: LikeType;
+  likedItemId: number;
+  // userLiking: UserProps;
+  userId: number;
+  createdAt: Date;
+  post?: PostProps;
 }
 
 interface CommentProps {
-    id: number;
-    description?: string;
-    // postId: number;
-    // post: PostProps;
-    // userId: number;
-    // user: UserProps;
-    user: {
-        id: AuthUserProps["id"];
-        lastName: AuthUserProps["lastName"];
-    }
-    parentId?: number;
-    createdAd?: Date | undefined;
+  id: number;
+  description?: string;
+  // postId: number;
+  // post: PostProps;
+  // userId: number;
+  // user: UserProps;
+  user: {
+    id: AuthUserProps['id'];
+    lastName: AuthUserProps['lastName'];
+  };
+  parentId?: number;
+  createdAd?: Date | undefined;
 }
 
 interface SavedPostProps {
-    id: number;
-    userId: number;
-    user: UserProps;
-    postId: number;
-    post: PostProps;
+  id: number;
+  userId: number;
+  user: UserProps;
+  postId: number;
+  post: PostProps;
 }
 
 interface RoleProps {
-    id: number;
-    name: string;
-    slug: string;
-    // authorizations: AuthorizationRoleProps[];
-    users: UserProps[];
+  id: number;
+  name: string;
+  slug: string;
+  // authorizations: AuthorizationRoleProps[];
+  users: UserProps[];
 }
 interface FollowProps {
-    id: number;
-    followerId: number;
-    follower: UserProps;
-    followedId: number;
-    followed: UserProps;
-    createdAt: Date;
-    updatedAt: Date;
+  id: number;
+  followerId: number;
+  follower: UserProps;
+  followedId: number;
+  followed: UserProps;
+  createdAt: Date;
+  updatedAt: Date;
 }
 interface ImageUserProps {
-    id: number;
-    url: string;
-    name?: string;
-    userId: number;
-    user: UserProps;
+  id: number;
+  url: string;
+  name?: string;
+  userId: number;
+  user: UserProps;
 }
 
-interface BannerImageProps extends ImageUserProps { 
-    status: BannerStatus;
+interface BannerImageProps extends ImageUserProps {
+  status: BannerStatus;
 }
 
-interface ProfileImageProps extends ImageUserProps{
-    status: ImageStatus;
+interface ProfileImageProps extends ImageUserProps {
+  status: ImageStatus;
 }
 
 interface SalonProps {
-    id: number;
-    name: string;
-    logo?: string;
-    street: string;
-    zipcode: string;
-    country: string;
-    userId: number;
-    user: UserProps[];
+  id: number;
+  name: string;
+  logo?: string;
+  street: string;
+  zipcode: string;
+  country: string;
+  userId: number;
+  user: UserProps[];
 }
 
-
 interface TagProps {
-    id: number;
-    name: string;
-    posts: PostTagProps[];
+  id: number;
+  name: string;
+  posts: PostTagProps[];
 }
 
 interface PostTypeChoiceProps {
-    id: number;
-    // post: PostProps;
-    postId: number;
-    type: PostType;
-    content: PostContentProps[];
+  id: number;
+  // post: PostProps;
+  postId: number;
+  type: PostType;
+  content: PostContentProps[];
 }
 interface PostContentProps {
-    id: number;
-    // postType: PostType;
-    postTypeId: number;
-    content: string;
+  id: number;
+  // postType: PostType;
+  postTypeId: number;
+  content: string;
 }

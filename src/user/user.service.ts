@@ -17,17 +17,17 @@ export class UserService {
     const users = await this.prisma.user.findMany({
       include: {
         roles: true,
-        pinned_post: true
+        pinned_post: true,
       },
     });
-  
+
     return users.map((user) => {
       delete user.password;
       return user;
     });
   }
   async getUserById(userId: number) {
-    const user = await this.prisma.user.findUnique({ 
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
         roles: true,
@@ -37,9 +37,9 @@ export class UserService {
           },
           orderBy: {
             post: {
-              createdAt: 'desc'
-            }
-          }
+              createdAt: 'desc',
+            },
+          },
         },
         savedPost: {
           select: {
@@ -47,9 +47,9 @@ export class UserService {
           },
           orderBy: {
             post: {
-              createdAt: 'desc'
-            }
-          }
+              createdAt: 'desc',
+            },
+          },
         },
         userlikes: {
           select: {
@@ -58,10 +58,10 @@ export class UserService {
           },
           orderBy: {
             post: {
-              createdAt: 'desc'
-            }
-          }
-        }
+              createdAt: 'desc',
+            },
+          },
+        },
       },
     });
     delete user.password;
@@ -70,6 +70,4 @@ export class UserService {
   async deleteUser(userId: number) {
     return this.prisma.user.delete({ where: { id: userId } });
   }
-
-
 }

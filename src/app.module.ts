@@ -20,7 +20,6 @@ import { LikeController } from './like/like.controller';
 import { LikeService } from './like/like.service';
 import { LikeModule } from './like/like.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -47,7 +46,7 @@ import { LikeModule } from './like/like.module';
     AppService,
     PostService,
     IsUniqueConstraint,
-    LikeService
+    LikeService,
     // ImageService
   ],
 })
