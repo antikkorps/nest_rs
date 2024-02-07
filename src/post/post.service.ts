@@ -80,7 +80,10 @@ export class PostService {
           },
           likes: true,
           _count: {
-            select: { comments: true },
+            select: { 
+              comments: true,
+              likes: true
+            },
           },
         },
         where: {
