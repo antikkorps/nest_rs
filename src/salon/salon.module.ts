@@ -4,6 +4,6 @@ import { SalonService } from './salon.service';
 
 @Module({
   controllers: [SalonController],
-  providers: [SalonService]
+  providers: [SalonService],
 })
 export class SalonModule {}

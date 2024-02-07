@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         JwtStrategy.extractJwtFromCookie,
-        ExtractJwt.fromAuthHeaderAsBearerToken()
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       secretOrKey: config.get('JWT_SECRET'),
     });
@@ -32,8 +32,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   private static extractJwtFromCookie(req: RequestType): string | null {
     const cookieName = process.env.SESSION_COOKIE;
-    if(
-      req.cookies && 
+    if (
+      req.cookies &&
       cookieName in req.cookies &&
       req.cookies[cookieName].length > 0
     ) {

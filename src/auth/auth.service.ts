@@ -17,15 +17,15 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
-  ) { }
+  ) {}
 
   async signup(dto: AuthDto) {
     // Generate the password hash
 
     const checkMail = await this.prisma.user.findUnique({
       where: {
-        email: dto.email
-      }
+        email: dto.email,
+      },
     });
     if (checkMail) {
       throw new ForbiddenException('Cet email est déjà enregistré');
@@ -38,11 +38,11 @@ export class AuthService {
       pseudo = createUserPseudo();
       checkPseudo = await this.prisma.user.findUnique({
         where: {
-          pseudo: pseudo
-        }
+          pseudo: pseudo,
+        },
       });
     } while (checkPseudo);
-   
+
     // return pseudo;
     try {
       const user = await this.prisma.user.create({
@@ -83,8 +83,8 @@ export class AuthService {
         email: dto.email,
       },
       include: {
-        roles: true
-      }
+        roles: true,
+      },
     });
     //if user does not exist throw exception
     if (!user)
@@ -94,16 +94,19 @@ export class AuthService {
     //if password incorrect, throw an exception
 
     // Get the user roles
-    const userRoles = user.roles.map(role => role.roleSlug.toString());
+    const userRoles = user.roles.map((role) => role.roleSlug.toString());
     // Join it in one strnig
     const concatenatedRoles = userRoles.join(',');
 
     if (!passwordMatches)
       throw new ForbiddenException('Utilisateur et/ou mot de passe incorrects');
 
-      
-    const {access_token} = await this.signToken(user.id, user.email, concatenatedRoles);
-   
+    const { access_token } = await this.signToken(
+      user.id,
+      user.email,
+      concatenatedRoles,
+    );
+
     response.cookie(process.env.SESSION_COOKIE, access_token, {
       httpOnly: false,
       secure: false,
