@@ -107,13 +107,16 @@ export class AuthService {
       concatenatedRoles,
     );
 
-    response.cookie(process.env.SESSION_COOKIE, access_token, {
+    const cookieName = process.env.SESSION_COOKIE;
+    response.cookie(cookieName, access_token, {
       httpOnly: false,
-      secure: false,
+      secure: true,
       sameSite: 'lax',
       domain: 'localhost',
+      expires: new Date(Date.now() + 60 * 60 * 1000),
     });
-    return { access_token };
+    
+    return { access_token,  cookieName};
 
     // return this.signToken(user.id, user.email, concatenatedRoles);
   }

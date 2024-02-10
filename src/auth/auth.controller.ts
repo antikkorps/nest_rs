@@ -24,9 +24,9 @@ export class AuthController {
     return this.authService.signup(dto);
   }
 
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   @Post('signin')
-  signin(@Body() dto: AuthDto, @Res({ passthrough: true }) response: any) {
+  signin(@Body() dto: AuthDto, @Res({ passthrough: true }) response: Response) {
     return this.authService.signin(dto, response);
   }
 
