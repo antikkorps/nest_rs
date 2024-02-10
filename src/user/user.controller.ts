@@ -18,6 +18,7 @@ import { EditUserDto } from './dto';
 export class UserController {
   constructor(private userService: UserService) {}
   // endpoint users/me
+
   @UseGuards(jwtGuard)
   @Get('me')
   getMe(
@@ -25,8 +26,9 @@ export class UserController {
     @GetUser('email') email: string,
     @GetUser('role') role: string,
   ) {
-    console.log({ email });
-    console.log({ role });
+    // console.log({ email });
+    // console.log({ role });
+
     return user;
   }
   // endpoint users/all
