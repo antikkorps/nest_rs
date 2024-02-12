@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { AuthDto } from './dto';
+import { AuthDto, PasswordResetDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { createUserPseudo } from 'helpers/createUserPseudo';
@@ -175,7 +175,7 @@ export class AuthService {
           resetToken,
         },
       });
-      return resetToken;
+      return {resetToken};
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
@@ -194,5 +194,43 @@ export class AuthService {
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
+  }
+
+  async resetPassword(dto: PasswordResetDto) {
+    const { password, token } = dto;
+
+    const checkToken = await this.validateUser(token);
+
+    if(checkToken) {
+      const passwordCrypt = await argon.hash(password);
+
+     
+      const user = await this.prisma.user.findFirst({
+        where: {
+          resetToken: token,
+        },
+      });
+  
+      const oldPasswordMatches = await argon.verify(user.password, password);
+
+      if(oldPasswordMatches) {
+        throw new ForbiddenException('Vous ne pouvez pas utiliser le même mot de passe');
+      }
+      
+      const updatePassword = await this.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          password: passwordCrypt,
+          resetToken: null,
+        },
+      });
+
+      return "mot de passe modifié";
+    } else {
+      throw new ForbiddenException('No token found');
+    }
+
   }
 }
