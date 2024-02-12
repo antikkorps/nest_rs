@@ -75,7 +75,6 @@ export class PostService {
             avatar: true,
             birth: true,
             subscriptions: true,
-            salons: true,
           },
         },
         comments: {
