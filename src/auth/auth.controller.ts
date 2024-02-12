@@ -10,7 +10,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
+import { AuthDto, PasswordResetDto } from './dto';
 
 @Controller('auth')
 export class AuthController {
@@ -50,5 +50,10 @@ export class AuthController {
   @Post('reset-password-request')
   resetPasswordRequest(@Body('email') email: string) {
     return this.authService.resetPasswordRequest(email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() dto: PasswordResetDto) {
+    return this.authService.resetPassword(dto);
   }
 }
