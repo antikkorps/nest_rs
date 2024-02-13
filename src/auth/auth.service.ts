@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { MailService } from 'src/mail/mail.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AuthDto, PasswordResetDto } from './dto';
 import * as argon from 'argon2';
@@ -17,6 +18,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private mailService: MailService,
   ) {}
 
   async signup(dto: AuthDto) {
@@ -175,6 +177,8 @@ export class AuthService {
           resetToken,
         },
       });
+      const resetLink = `$process.env.BASE_URL/reset-password?token=${resetToken}`;
+      await this.mailService.resetPasswordLink(resetLink, user.email);
       return { resetToken };
     } catch (error) {
       throw new ForbiddenException(error.message);
