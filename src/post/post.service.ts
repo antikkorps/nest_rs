@@ -62,7 +62,21 @@ export class PostService {
       orderBy: [orderByClause],
       ...paginateOptions,
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            pseudo: true,
+            firstName: true,
+            lastName: true,
+            webpage: true,
+            createdAt: true,
+            updatedAt: true,
+            avatar: true,
+            birth: true,
+            subscriptions: true,
+          },
+        },
         comments: {
           orderBy: {
             createdAt: 'desc',
@@ -81,9 +95,9 @@ export class PostService {
         },
         likes: true,
         _count: {
-          select: { 
+          select: {
             comments: true,
-            likes:true          
+            likes: true,
           },
         },
       },
