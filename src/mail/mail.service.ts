@@ -15,6 +15,8 @@ export class MailService {
         pass: process.env.MAIL_PASSWORD, // generated ethereal password
       },
     });
+    console.log(this.transporter);
+    console.log('Mail service initialized');
   }
 
   async sendUserConfirmation(user: any, token: string) {
@@ -35,13 +37,16 @@ export class MailService {
     const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
     const emailBody = `Hello ${user.firstName},\n\nYou have requested to reset your password. Please click on the following link to reset your password: ${resetLink}\n\nRegards,\nThe Team`;
     const emailFrom = process.env.MAIL_FROM;
-
-    await this.transporter.sendMail({
-      from: emailFrom,
-      to: user.email,
-      subject: 'Reset your password',
-      text: emailBody,
-    });
-    console.log(emailBody);
+    try {
+      await this.transporter.sendMail({
+        from: emailFrom,
+        to: user.email,
+        subject: 'Reset your password',
+        text: emailBody,
+      });
+    } catch (error) {
+      console.error('Erreur sending mail', error);
+      throw new Error('mail was not send');
+    }
   }
 }

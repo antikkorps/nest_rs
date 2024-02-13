@@ -48,8 +48,9 @@ export class AuthController {
   }
 
   @Post('reset-password-request')
-  resetPasswordRequest(@Body('email') email: string) {
-    return this.authService.resetPasswordRequest(email);
+  async resetPasswordRequest(@Body('email') email: string) {
+    const response = await this.authService.resetPasswordRequest(email);
+    return response;
   }
 
   @Post('reset-password')

@@ -159,7 +159,6 @@ export class AuthService {
           email: email,
         },
       });
-
       if (!user) {
         throw new NotFoundException("L'email n'a pas été trouvé");
       }
@@ -177,9 +176,22 @@ export class AuthService {
           resetToken,
         },
       });
-      const resetLink = `$process.env.BASE_URL/reset-password?token=${resetToken}`;
-      await this.mailService.resetPasswordLink(resetLink, user.email);
-      return { resetToken, message: 'Reset password link sent!' };
+      const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+      try {
+        const mail = await this.mailService.resetPasswordLink(
+          resetLink,
+          user.email,
+        );
+        console.log('mail', mail);
+        return {
+          resetToken,
+          resetLink,
+          message: 'Reset password link sent!',
+          mail,
+        };
+      } catch (error) {
+        throw new ForbiddenException('Mail not sent');
+      }
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
