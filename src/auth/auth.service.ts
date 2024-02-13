@@ -115,8 +115,8 @@ export class AuthService {
       domain: 'localhost',
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
-    
-    return { access_token,  cookieName};
+
+    return { access_token, cookieName };
 
     // return this.signToken(user.id, user.email, concatenatedRoles);
   }
@@ -175,7 +175,7 @@ export class AuthService {
           resetToken,
         },
       });
-      return {resetToken};
+      return { resetToken };
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
@@ -201,22 +201,23 @@ export class AuthService {
 
     const checkToken = await this.validateUser(token);
 
-    if(checkToken) {
+    if (checkToken) {
       const passwordCrypt = await argon.hash(password);
 
-     
       const user = await this.prisma.user.findFirst({
         where: {
           resetToken: token,
         },
       });
-  
+
       const oldPasswordMatches = await argon.verify(user.password, password);
 
-      if(oldPasswordMatches) {
-        throw new ForbiddenException('Vous ne pouvez pas utiliser le même mot de passe');
+      if (oldPasswordMatches) {
+        throw new ForbiddenException(
+          'Vous ne pouvez pas utiliser le même mot de passe',
+        );
       }
-      
+
       const updatePassword = await this.prisma.user.update({
         where: {
           id: user.id,
@@ -227,10 +228,9 @@ export class AuthService {
         },
       });
 
-      return "mot de passe modifié";
+      return 'mot de passe modifié';
     } else {
       throw new ForbiddenException('No token found');
     }
-
   }
 }

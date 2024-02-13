@@ -19,6 +19,7 @@ import { IsUniqueConstraint } from 'custom_validator/isUnique/is-unique-constrai
 import { LikeController } from './like/like.controller';
 import { LikeService } from './like/like.service';
 import { LikeModule } from './like/like.module';
+import { MailService } from './mail/mail.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { LikeModule } from './like/like.module';
     PostService,
     IsUniqueConstraint,
     LikeService,
+    MailService,
     // ImageService
   ],
 })
