@@ -48,8 +48,9 @@ export class AuthController {
   }
 
   @Post('forgotten-password')
-  forgottenPassword(@Body('email') email: string) {
-    return this.authService.forgottenPassword(email);
+  async forgottenPassword(@Body('email') email: string) {
+    const response = await this.authService.forgottenPassword(email);
+    return response;
   }
 
   @Post('reset-password')
