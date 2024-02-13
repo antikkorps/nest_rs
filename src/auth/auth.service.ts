@@ -150,7 +150,7 @@ export class AuthService {
       throw new ForbiddenException('Invalid token');
     }
   }
-  async resetPasswordRequest(email: string) {
+  async forgottenPassword(email: string) {
     try {
       const user = await this.prisma.user.findUnique({
         where: {
@@ -221,13 +221,14 @@ export class AuthService {
         where: {
           id: user.id,
         },
+        
         data: {
           password: passwordCrypt,
           resetToken: null,
         },
       });
 
-      return "mot de passe modifié";
+      return { message: 'mot de passe modifié' };
     } else {
       throw new ForbiddenException('No token found');
     }
