@@ -19,7 +19,7 @@ export class MailService {
     console.log('Mail service initialized');
   }
 
-  async sendUserConfirmation(user: any, token: string) {
+  async sendConfirmationEmail(user: any, token: string) {
     const confirmationLink = `${process.env.BASE_URL}?token=${token}`;
     const emailBody = `Hello ${user.firstName},\n\nWelcome to Inkagram! Please click on the following link to confirm your email address: ${confirmationLink}\n\nRegards,\nThe Team`;
     const emailFrom = process.env.MAIL_FROM;
