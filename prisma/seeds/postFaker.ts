@@ -27,7 +27,6 @@ import { faker } from '@faker-js/faker';
 //     ]
 //   })
 
-
 export const fakerPost = (): any => {
   const postBody = [
     {
@@ -46,38 +45,35 @@ export const fakerPost = (): any => {
       ],
     },
   ];
-  const postTypeChoiceCreate = postBody.map(body => ({
+  const postTypeChoiceCreate = postBody.map((body) => ({
     type: body.postTypeChoice,
     content: {
-      create: body.postContent.map(content => ({
+      create: body.postContent.map((content) => ({
         content: content.content,
       })),
     },
   }));
 
-  const tags = [
-    { name: faker.word.adverb(9) },
-    { name: faker.word.adverb(9) },
-  ];
+  const tags = [{ name: faker.word.adverb(9) }, { name: faker.word.adverb(9) }];
 
-  const tagsConnectOrCreate = tags.map(tag => ({
-      where: { name: tag.name },
-      create: { name: tag.name },
+  const tagsConnectOrCreate = tags.map((tag) => ({
+    where: { name: tag.name },
+    create: { name: tag.name },
   }));
 
   return {
     description: faker.lorem.lines({ min: 1, max: 3 }),
     user_status: 'PUBLISHED',
     postTypeChoice: {
-        create: postTypeChoiceCreate,
+      create: postTypeChoiceCreate,
     },
     tags: {
-      create: tagsConnectOrCreate.map(tag => ({
-          tag: {
-              connectOrCreate: tag,
-          },
+      create: tagsConnectOrCreate.map((tag) => ({
+        tag: {
+          connectOrCreate: tag,
+        },
       })),
-  },
+    },
     userId: 1,
     views: faker.number.int({ min: 10, max: 1000000 }),
     shared: faker.number.int({ min: 10, max: 1000000 }),

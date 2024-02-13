@@ -179,7 +179,7 @@ export class AuthService {
       });
       const resetLink = `$process.env.BASE_URL/reset-password?token=${resetToken}`;
       await this.mailService.resetPasswordLink(resetLink, user.email);
-      return { resetToken };
+      return { resetToken, message: 'Reset password link sent!' };
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
