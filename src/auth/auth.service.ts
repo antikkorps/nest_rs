@@ -250,10 +250,10 @@ export class AuthService {
           };
         } catch (err) {
           throw new ForbiddenException('Mail not sent');
+        }
+      } else {
+        throw new ForbiddenException('No token found');
       }
-
-    } else {
-      throw new ForbiddenException('No token found');
     }
   }
 }
