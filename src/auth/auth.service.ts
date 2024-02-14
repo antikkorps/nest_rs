@@ -176,16 +176,15 @@ export class AuthService {
           resetToken,
         },
       });
-      const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+      console.log('user.mail', user.email);
+      console.log('email', email);
       try {
-        const mail = await this.mailService.resetPasswordLink(
-          resetLink,
-          user.email,
-        );
-        console.log('mail', mail);
+        console.log('user.resetToken', user.resetToken);
+        console.log('user.email', user.email);
+        const mail = await this.mailService.resetPasswordLink(user);
+
         return {
           resetToken,
-          resetLink,
           message: 'Reset password link sent!',
           mail,
         };
@@ -196,6 +195,7 @@ export class AuthService {
       throw new ForbiddenException(error.message);
     }
   }
+
   async validateResetToken(token: string): Promise<number> {
     try {
       const user = await this.prisma.user.findFirst({
@@ -238,7 +238,7 @@ export class AuthService {
         where: {
           id: user.id,
         },
-        
+
         data: {
           password: passwordCrypt,
           resetToken: null,

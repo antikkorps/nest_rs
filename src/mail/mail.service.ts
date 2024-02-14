@@ -33,8 +33,9 @@ export class MailService {
     console.log(emailBody);
   }
 
-  async resetPasswordLink(user: any, resetToken: string) {
-    const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
+  async resetPasswordLink(user) {
+    console.log(user.email);
+    const resetLink = `${process.env.BASE_URL}/reset-password?token=${user.resetToken}`;
     const emailBody = `Hello ${user.firstName},\n\nYou have requested to reset your password. Please click on the following link to reset your password: ${resetLink}\n\nRegards,\nThe Team`;
     const emailFrom = process.env.MAIL_FROM;
     try {
