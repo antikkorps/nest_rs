@@ -176,16 +176,11 @@ export class AuthService {
           resetToken,
         },
       });
-      const resetLink = `${process.env.BASE_URL}/reset-password?token=${resetToken}`;
       try {
-        const mail = await this.mailService.resetPasswordLink(
-          resetLink,
-          user.email,
-        );
-        console.log('mail', mail);
+        const mail = await this.mailService.resetPasswordLink(user);
+
         return {
           resetToken,
-          resetLink,
           message: 'Reset password link sent!',
           mail,
         };
@@ -196,6 +191,7 @@ export class AuthService {
       throw new ForbiddenException(error.message);
     }
   }
+
   async validateResetToken(token: string): Promise<number> {
     try {
       const user = await this.prisma.user.findFirst({
@@ -230,7 +226,7 @@ export class AuthService {
 
       if (oldPasswordMatches) {
         throw new ForbiddenException(
-          'Vous ne pouvez pas utiliser le même mot de passe',
+          'You cannot use the same password as the old one!',
         );
       }
 
@@ -238,14 +234,24 @@ export class AuthService {
         where: {
           id: user.id,
         },
-        
+
         data: {
           password: passwordCrypt,
           resetToken: null,
         },
       });
 
-      return { message: 'mot de passe modifié' };
+      if (updatePassword) {
+        try {
+          const mail = await this.mailService.confirmationOfModifiedPass(user);
+          return {
+            message: 'Password successfully updated!',
+            mail,
+          };
+        } catch (err) {
+          throw new ForbiddenException('Mail not sent');
+      }
+
     } else {
       throw new ForbiddenException('No token found');
     }
