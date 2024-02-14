@@ -176,11 +176,7 @@ export class AuthService {
           resetToken,
         },
       });
-      console.log('user.mail', user.email);
-      console.log('email', email);
       try {
-        console.log('user.resetToken', user.resetToken);
-        console.log('user.email', user.email);
         const mail = await this.mailService.resetPasswordLink(user);
 
         return {
@@ -230,7 +226,7 @@ export class AuthService {
 
       if (oldPasswordMatches) {
         throw new ForbiddenException(
-          'Vous ne pouvez pas utiliser le même mot de passe',
+          'You cannot use the same password as the old one!',
         );
       }
 
@@ -245,7 +241,17 @@ export class AuthService {
         },
       });
 
-      return { message: 'mot de passe modifié' };
+      if (updatePassword) {
+        try {
+          const mail = await this.mailService.confirmationOfModifiedPass(user);
+          return {
+            message: 'Password successfully updated!',
+            mail,
+          };
+        } catch (err) {
+          throw new ForbiddenException('Mail not sent');
+      }
+
     } else {
       throw new ForbiddenException('No token found');
     }

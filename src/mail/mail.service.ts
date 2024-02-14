@@ -50,4 +50,20 @@ export class MailService {
       throw new Error('mail was not send');
     }
   }
+
+  async confirmationOfModifiedPass(user) {
+    const emailBody = `Hello ${user.firstName},\n\nYou have successfully modified your password.\n\nRegards,\nThe Team`;
+    const emailFrom = process.env.MAIL_FROM;
+    try {
+      await this.transporter.sendMail({
+        from: emailFrom,
+        to: user.email,
+        subject: 'Password modified',
+        text: emailBody,
+      });
+    } catch (error) {
+      console.error('Erreur sending mail', error);
+      throw new Error('mail was not send');
+    }
+  }
 }
