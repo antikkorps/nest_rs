@@ -393,24 +393,24 @@ export class PostService {
     }
   }
 
-  async savePost(id: number, user: AuthUserProps) {
+  async bookMarkPost(id: number, user: AuthUserProps) {
     const post = await this.prisma.post.findUnique({
       where: { id },
     });
     if (!post) throw new NotFoundException('Post not found');
 
-    const existingSavedPost = await this.prisma.savedPost.findFirst({
+    const existingBookMarked = await this.prisma.bookmark.findFirst({
       where: {
         userId: user.id,
         postId: id,
       },
     });
-    if (existingSavedPost) {
-      return await this.prisma.savedPost.delete({
-        where: { id: existingSavedPost.id },
+    if (existingBookMarked) {
+      return await this.prisma.bookmark.delete({
+        where: { id: existingBookMarked.id },
       });
     } else {
-      return await this.prisma.savedPost.create({
+      return await this.prisma.bookmark.create({
         data: {
           userId: user.id,
           postId: id,
@@ -418,6 +418,7 @@ export class PostService {
       });
     }
   }
+
 
   async createComment(
     id: number,
