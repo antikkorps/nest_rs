@@ -1,9 +1,10 @@
 import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
-
+import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class MailService {
   private transporter;
+  private authService: AuthService;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -19,8 +20,13 @@ export class MailService {
     console.log('Mail service initialized');
   }
 
-  async sendConfirmationEmail(user: any, token: string) {
-    const confirmationLink = `${process.env.BASE_URL}?token=${token}`;
+  async sendConfirmationEmail(user) {
+    const confirmationToken = await this.authService.signToken(
+      user.userId,
+      user.email,
+      user.roles,
+    );
+    const confirmationLink = `${process.env.FRONT_URL}${process.env.CONFIRM_URL}?token=${confirmationToken}`;
     const emailBody = `Hello ${user.firstName},\n\nWelcome to Inkagram! Please click on the following link to confirm your email address: ${confirmationLink}\n\nRegards,\nThe Team`;
     const emailFrom = process.env.MAIL_FROM;
 
@@ -35,7 +41,7 @@ export class MailService {
 
   async resetPasswordLink(user) {
     console.log(user.email);
-    const resetLink = `${process.env.FRONT_RESET_URL}/reset-password?token=${user.resetToken}`;
+    const resetLink = `${process.env.FRONT_URL}${process.env.RESET_URL}/reset-password?token=${user.resetToken}`;
     const emailBody = `Hello ${user.firstName},\n\nYou have requested to reset your password. Please click on the following link to reset your password: ${resetLink}\n\nRegards,\nThe Team`;
     const emailFrom = process.env.MAIL_FROM;
     try {
