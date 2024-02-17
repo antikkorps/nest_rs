@@ -112,9 +112,9 @@ export class PostController {
   }
 
   @UseGuards(jwtGuard)
-  @Post('/savePost/:id')
-  savePost(@Param('id') postId: string, @User() user: AuthUserProps) {
+  @Post('/bookmarked/:id')
+  bookMarkPost(@Param('id') postId: string, @User() user: AuthUserProps) {
     const id = parseInt(postId, 10);
-    return this.postService.savePost(+id, user);
+    return this.postService.bookMarkPost(+id, user);
   }
 }

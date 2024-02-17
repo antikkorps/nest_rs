@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
 
@@ -41,7 +41,7 @@ export class UserService {
             },
           },
         },
-        savedPost: {
+        bookMark: {
           select: {
             postId: true,
           },
@@ -69,5 +69,40 @@ export class UserService {
   }
   async deleteUser(userId: number) {
     return this.prisma.user.delete({ where: { id: userId } });
+  }
+
+
+  async getPostBookmarksAndLikesFromUser(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        userlikes: {
+          select: {
+            likeType: true,
+            likedItemId: true,
+          },
+        },
+        bookMark: {
+          select: {
+            postId: true,
+          },
+          orderBy: {
+            post: {
+              createdAt: 'desc',
+            },
+          },
+        },
+      },
+    });
+  
+    if(!user) throw new NotFoundException('User not found');
+  
+    const postLikes = user.userlikes.filter(like => like.likeType === 'POST').map(like => like.likedItemId);
+    const bookmarkIds = user.bookMark.map(bookmark => bookmark.postId);
+ 
+    return {
+      post_likes: postLikes,
+      bookmarks: bookmarkIds,
+    };
   }
 }

@@ -57,4 +57,11 @@ export class UserController {
     const id = parseInt(userId, 10);
     return this.userService.deleteUser(id);
   }
+
+  @UseGuards(jwtGuard)
+  @Get('/like-bookmarks-posts/:id')
+  getBookmarksFromUser(@Param('id') userId: string) {
+    const id = parseInt(userId, 10);
+    return this.userService.getPostBookmarksAndLikesFromUser(id);
+  }
 }

@@ -45,7 +45,8 @@ model User {
   roles RoleUser[]
 
   posts             Post[]           @relation("posts")
-  savedPost         SavedPost[]      @relation("userSavedPosts")
+  // savedPost         SavedPost[]      @relation("userSavedPosts")
+  bookMark          Bookmark[]       @relation("userBookmarks")
   userComments      Comment[]        @relation("userComments")
   userlikes         Like[]           @relation("userLiking")
   userReports       Report[]         @relation("userReporting")
@@ -73,7 +74,8 @@ model Post {
 
   likes          Like[]       @relation("postLikes")
   comments       Comment[]    @relation("postComments")
-  userSavedPosts SavedPost[]  @relation("userSavedPosts")
+  // userSavedPosts SavedPost[]  @relation("userSavedPosts")
+  bookmarkedPosts Bookmark[]  @relation("userBookmarks")
   pinnedPosts    PinnedPost[] @relation("pinnedPost")
 
   // Add for the post Content by Karl 12/01
@@ -154,16 +156,27 @@ model MediaPost {
   @@map("mediaPosts")
 }
 
-model SavedPost {
+// model SavedPost {
+//   id     Int  @id @default(autoincrement())
+//   userId Int
+//   user   User @relation("userSavedPosts", fields: [userId], references: [id])
+
+//   postId Int
+//   post   Post @relation("userSavedPosts", fields: [postId], references: [id])
+
+//   @@unique([userId, postId])
+//   @@map("savedPosts")
+// }
+model Bookmark {
   id     Int  @id @default(autoincrement())
   userId Int
-  user   User @relation("userSavedPosts", fields: [userId], references: [id])
+  user   User @relation("userBookmarks", fields: [userId], references: [id])
 
   postId Int
-  post   Post @relation("userSavedPosts", fields: [postId], references: [id])
+  post   Post @relation("userBookmarks", fields: [postId], references: [id])
 
   @@unique([userId, postId])
-  @@map("savedPosts")
+  @@map("bookmarks")
 }
 
 model PostTag {
