@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { MailService } from 'src/mail/mail.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { AuthDto, PasswordResetDto } from './dto';
 import * as argon from 'argon2';
@@ -17,6 +18,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private mailService: MailService,
   ) {}
 
   async signup(dto: AuthDto) {
@@ -115,8 +117,8 @@ export class AuthService {
       domain: 'localhost',
       expires: new Date(Date.now() + 60 * 60 * 1000),
     });
-    
-    return { access_token,  cookieName};
+
+    return { access_token, cookieName };
 
     // return this.signToken(user.id, user.email, concatenatedRoles);
   }
@@ -157,7 +159,6 @@ export class AuthService {
           email: email,
         },
       });
-
       if (!user) {
         throw new NotFoundException("L'email n'a pas été trouvé");
       }
@@ -175,11 +176,22 @@ export class AuthService {
           resetToken,
         },
       });
-      return {resetToken};
+      try {
+        const mail = await this.mailService.resetPasswordLink(user);
+
+        return {
+          resetToken,
+          message: 'Reset password link sent!',
+          mail,
+        };
+      } catch (error) {
+        throw new ForbiddenException('Mail not sent');
+      }
     } catch (error) {
       throw new ForbiddenException(error.message);
     }
   }
+
   async validateResetToken(token: string): Promise<number> {
     try {
       const user = await this.prisma.user.findFirst({
@@ -201,37 +213,47 @@ export class AuthService {
 
     const checkToken = await this.validateUser(token);
 
-    if(checkToken) {
+    if (checkToken) {
       const passwordCrypt = await argon.hash(password);
 
-     
       const user = await this.prisma.user.findFirst({
         where: {
           resetToken: token,
         },
       });
-  
+
       const oldPasswordMatches = await argon.verify(user.password, password);
 
-      if(oldPasswordMatches) {
-        throw new ForbiddenException('Vous ne pouvez pas utiliser le même mot de passe');
+      if (oldPasswordMatches) {
+        throw new ForbiddenException(
+          'You cannot use the same password as the old one!',
+        );
       }
-      
+
       const updatePassword = await this.prisma.user.update({
         where: {
           id: user.id,
         },
-        
+
         data: {
           password: passwordCrypt,
           resetToken: null,
         },
       });
 
-      return { message: 'mot de passe modifié' };
-    } else {
-      throw new ForbiddenException('No token found');
+      if (updatePassword) {
+        try {
+          const mail = await this.mailService.confirmationOfModifiedPass(user);
+          return {
+            message: 'Password successfully updated!',
+            mail,
+          };
+        } catch (err) {
+          throw new ForbiddenException('Mail not sent');
+        }
+      } else {
+        throw new ForbiddenException('No token found');
+      }
     }
-
   }
 }
