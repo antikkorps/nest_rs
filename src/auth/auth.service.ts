@@ -11,6 +11,7 @@ import { AuthDto, PasswordResetDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { createUserPseudo } from 'helpers/createUserPseudo';
+import { AuthUserProps } from 'types/all';
 
 @Injectable()
 export class AuthService {
@@ -152,6 +153,7 @@ export class AuthService {
       throw new ForbiddenException('Invalid token');
     }
   }
+
   async forgottenPassword(email: string) {
     try {
       const user = await this.prisma.user.findUnique({
@@ -210,7 +212,6 @@ export class AuthService {
 
   async resetPassword(dto: PasswordResetDto) {
     const { password, token } = dto;
-
     const checkToken = await this.validateUser(token);
 
     if (checkToken) {
@@ -255,5 +256,54 @@ export class AuthService {
         throw new ForbiddenException('No token found');
       }
     }
+  }
+
+  async resendConfirmationLink(email: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!user) {
+        throw new NotFoundException("L'email n'a pas été trouvé");
+      }
+      const secret = this.config.get('JWT_SECRET');
+      const payload = { userId: user.id };
+      const resetToken = await this.jwt.signAsync(payload, {
+        secret: secret,
+        expiresIn: '1h',
+      });
+      await this.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          resetToken,
+        },
+      });
+      try {
+        // const mail = await this.mailService.resetPasswordLink(user);
+
+        return {
+          resetToken,
+          message: 'Confirmation mail link sent!',
+          // mail,
+        };
+      } catch (error) {
+        throw new ForbiddenException('Mail not sent');
+      }
+    } catch (error) {
+      throw new ForbiddenException(error.message);
+    }
+  }
+  
+  async checkConfirmationMailToken(token: string) {
+    //here we need to add the logic
+    // I need the token as search params    ?token=token
+    throw new ForbiddenException(
+      'Token invalid !',
+    );
+    return {token}
   }
 }
