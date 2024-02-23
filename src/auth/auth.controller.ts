@@ -8,9 +8,13 @@ import {
   Param,
   ForbiddenException,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, PasswordResetDto } from './dto';
+import { jwtGuard } from './guard';
+import { User } from 'helpers/getUser';
+import { AuthUserProps } from 'types/all';
 
 @Controller('auth')
 export class AuthController {
@@ -56,5 +60,18 @@ export class AuthController {
   @Post('reset-password')
   resetPassword(@Body() dto: PasswordResetDto) {
     return this.authService.resetPassword(dto);
+  }
+
+
+  @Post('resend-confirmation-mail-link')
+  async resendConfirmationLink(@Body('email') email:string) {
+    const response = await this.authService.resendConfirmationLink(email);
+    return response;
+  }
+
+  @Post('confirm-email-check-token')
+  async checkConfirmationMailToken(@Body('token') token:string) {
+    const response = await this.authService.checkConfirmationMailToken(token);
+    return response;
   }
 }
