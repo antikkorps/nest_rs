@@ -62,6 +62,7 @@ export const fakerPost = (): any => {
   }));
 
   return {
+    title: faker.lorem.lines(1),
     description: faker.lorem.lines({ min: 1, max: 3 }),
     user_status: 'PUBLISHED',
     postTypeChoice: {
