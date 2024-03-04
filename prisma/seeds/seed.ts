@@ -51,44 +51,59 @@ async function main() {
     });
   }
   /// --------- create one admin --------------- ///
-  await prisma.user.create({
-    data: {
-      firstName: 'superadmin',
-      lastName: 'superadmin',
+  let superAdmin = await prisma.user.findUnique({
+    where: {
       email: 'superadmin@admin.com',
-      pseudo: 'super',
-      password: await argon2.hash(process.env.ADMIN_PASSWORD),
-      roles: {
-        create: [
-          {
-            assignedBy: 'Default',
-            roleSlug: 'super_admin', // roleId 1 === Super Admin
-          },
-          {
-            assignedBy: 'Default',
-            roleSlug: 'admin', // roleId 1 === Admin
-          },
-        ],
-      },
     },
   });
-  await prisma.user.create({
-    data: {
-      firstName: 'guest',
-      lastName: 'guest',
-      pseudo: faker.lorem.word(),
+  if (!superAdmin) {
+    superAdmin = await prisma.user.create({
+      data: {
+        firstName: 'superadmin',
+        lastName: 'superadmin',
+        email: 'superadmin@admin.com',
+        pseudo: 'super',
+        password: await argon2.hash(process.env.ADMIN_PASSWORD),
+        roles: {
+          create: [
+            {
+              assignedBy: 'Default',
+              roleSlug: 'super_admin', // roleId 1 === Super Admin
+            },
+            {
+              assignedBy: 'Default',
+              roleSlug: 'admin', // roleId 1 === Admin
+            },
+          ],
+        },
+      },
+    });
+  }
+
+  let guestUser = await prisma.user.findUnique({
+    where: {
       email: 'guest@admin.com',
-      password: await argon2.hash(process.env.ADMIN_PASSWORD),
-      roles: {
-        create: [
-          {
-            assignedBy: 'Default',
-            roleSlug: 'guest', // roleId 1 === Super Admin
-          },
-        ],
-      },
     },
   });
+  if (!guestUser) {
+    guestUser = await prisma.user.create({
+      data: {
+        firstName: 'guest',
+        lastName: 'guest',
+        pseudo: faker.lorem.word(),
+        email: 'guest@admin.com',
+        password: await argon2.hash(process.env.ADMIN_PASSWORD),
+        roles: {
+          create: [
+            {
+              assignedBy: 'Default',
+              roleSlug: 'guest', // roleId 1 === Super Admin
+            },
+          ],
+        },
+      },
+    });
+  }
 
   for (let i = 0; i < fakerRounds; i++) {
     // await prisma.user.create({ data: fakerUser() });
