@@ -2,6 +2,8 @@ import {
   ForbiddenException,
   NotFoundException,
   Injectable,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +14,7 @@ import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { createUserPseudo } from 'helpers/createUserPseudo';
 import { AuthUserProps } from 'types/all';
+import { response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -283,12 +286,10 @@ export class AuthService {
         },
       });
       try {
-        // const mail = await this.mailService.resetPasswordLink(user);
-
+        // const mail = await this.mailService.sendConfirmationEmail(user);
         return {
           resetToken,
           message: 'Confirmation mail link sent!',
-          // mail,
         };
       } catch (error) {
         throw new ForbiddenException('Mail not sent');
@@ -297,13 +298,35 @@ export class AuthService {
       throw new ForbiddenException(error.message);
     }
   }
-  
+
   async checkConfirmationMailToken(token: string) {
-    //here we need to add the logic
-    // I need the token as search params    ?token=token
-    throw new ForbiddenException(
-      'Token invalid !',
-    );
-    return {token}
+    const secret = this.config.get('JWT_SECRET');
+    const decodedPayload = await this.jwt.verifyAsync(token, {
+      secret: secret,
+    });
+
+    if (!decodedPayload) {
+      throw new ForbiddenException('Invalid token');
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: { id: decodedPayload['userId'] },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.confirmedAt !== null) {
+      throw new NotFoundException('User already confirmed');
+    }
+    const updatedUser = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { confirmedAt: new Date() },
+    });
+    return {
+      success: true,
+      message: 'User confirmed!',
+    };
   }
 }
