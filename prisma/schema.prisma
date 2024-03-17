@@ -54,6 +54,8 @@ model User {
   messages_received InstantMessage[] @relation("ReceiverMessages")
   pinned_post       PinnedPost[]     @relation("userPinnedPost")
 
+  confirmedAt DateTime?
+  
   @@index(fields: [firstName, lastName, email], name: "main_user_index")
   @@map("users")
 }
