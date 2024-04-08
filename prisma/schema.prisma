@@ -29,6 +29,7 @@ model User {
   password      String
   resetToken    String?
   webpage       String?
+  textPresentation String?
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   avatar        String?
