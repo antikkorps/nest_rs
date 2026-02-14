@@ -36,7 +36,7 @@
     "@nestjs/jwt": "^10.1.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^10.0.1",
-    "@nestjs/platform-express": "^10.4.20",
+    "@nestjs/platform-express": "^10.4.22",
     "@prisma/client": "^5.10.2",
     "@types/cookie-parser": "^1.4.6",
     "argon2": "^0.31.0",
